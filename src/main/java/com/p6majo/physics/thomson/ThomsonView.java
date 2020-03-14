@@ -36,13 +36,13 @@ public class ThomsonView extends JFrame {
         super();
 
 
-        glView  = new GLView2(600,600, simulation);
+        glView  = new GLView2(800,800, simulation);
         glView.setFocusable(true);
         this.setContentPane(glView);
         glView.requestFocus();
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setSize(1600, 1600);
+        this.setSize(800, 800);
         this.setLocation(0, 0);
         this.setVisible(true);
 

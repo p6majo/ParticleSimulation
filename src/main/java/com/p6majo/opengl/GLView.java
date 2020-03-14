@@ -13,8 +13,6 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
-
 /**
  * The class provides a JPanel with an OpenGl view included
  *
@@ -57,6 +55,7 @@ private final Simulation simulation;
 
         this.add(canvas, BorderLayout.CENTER);
 
+        /*
         addWindowListener(new WindowAdapter()
         {
             public void windowClosing(WindowEvent e)
@@ -64,7 +63,7 @@ private final Simulation simulation;
                 System.exit(0);
             }
         });
-
+*/
 
     }
 

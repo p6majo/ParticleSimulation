@@ -41,11 +41,11 @@ public class NBodyThomson2 extends JFrame {
         ThomsonSimulation2 thomson = new ThomsonSimulation2(3,2,0.03);
 
 
-        glView  = new GLView2(600,600, thomson);
+        glView  = new GLView2(1000,1000, thomson);
 
         this.setContentPane(glView);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setSize(1600, 1600);
+        this.setSize(1600, 1200);
         this.setLocation(0, 0);
         this.setVisible(true);
 

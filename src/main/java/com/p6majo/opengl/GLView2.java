@@ -19,7 +19,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;
 
-import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
 /**
  * The class provides a JPanel with an OpenGl view included
@@ -185,7 +184,7 @@ public class GLView2 extends JPanel implements GLEventListener, MouseMotionListe
 
         this.add(canvas, BorderLayout.CENTER);
 
-
+/*
         addWindowListener(new WindowAdapter()
         {
             public void windowClosing(WindowEvent e)
@@ -194,6 +193,7 @@ public class GLView2 extends JPanel implements GLEventListener, MouseMotionListe
             }
         });
 
+*/
 
     }
 
