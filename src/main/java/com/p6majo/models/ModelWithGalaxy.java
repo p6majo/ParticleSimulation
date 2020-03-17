@@ -1,4 +1,7 @@
-package com.p6majo.particlesimulation;
+package com.p6majo.models;
+
+import com.p6majo.particlesimulation.Galaxy;
+import com.p6majo.particlesimulation.Vector;
 
 import java.awt.*;
 import java.util.function.Function;

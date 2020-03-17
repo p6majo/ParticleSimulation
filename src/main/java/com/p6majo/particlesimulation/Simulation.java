@@ -2,6 +2,8 @@ package com.p6majo.particlesimulation;
 
 
 import com.p6majo.codingtrain.CodingTrainGui;
+import com.p6majo.models.Model;
+import com.p6majo.models.ModelWithTwoGalaxies;
 
 import java.awt.*;
 import java.util.List;

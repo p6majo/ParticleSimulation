@@ -7,4 +7,5 @@ package com.p6majo.octtree;
  */
 public interface ObjectIn3DSpace {
     public Vector3D getPosition();
+    public double getMass();
 }

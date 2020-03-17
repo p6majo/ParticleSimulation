@@ -1,4 +1,9 @@
-package com.p6majo.particlesimulation;
+package com.p6majo.models;
+
+import com.p6majo.octtree.Cuboid;
+import com.p6majo.octtree.Octtree;
+import com.p6majo.particlesimulation.Particle;
+import com.p6majo.particlesimulation.QuadTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +16,14 @@ import java.util.function.Function;
  * @version 2020=03-11
  *
  */
-public abstract class Model {
+public abstract class Model3D {
 
     public int particleNumber = 10000;
 
     public Function<Double,Double> gravityLaw =new Function<Double,Double>(){
         @Override
         public Double apply(Double distance) {
-            return 1./distance;
+            return 1./distance/distance;
         }
     };
     /*
@@ -27,16 +32,16 @@ public abstract class Model {
      **********************
      */
 
-    protected int width;
-    protected int height;
-    protected Random rnd;
+    protected Cuboid container;
+
+    protected final Random rnd;
+    protected final double G;
+    protected final double theta ; //acccuracy parameter for the Barnes-Hutt algorithm
     protected ArrayList<Particle> particles;
-    protected QuadTree qt ;
-    protected  double G = 1.;
-    protected double theta = 2.; //acccuracy parameter for the Barnes-Hutt algorithm
-    protected double dt = 0.05;
+    public final double dt;
 
 
+    protected Octtree ot; //this octtree is needed to calculate the mass distribution, it is invoked without model
 
     /*
      *********************
@@ -44,9 +49,15 @@ public abstract class Model {
      *********************
      */
 
-    public Model(int width,int height, double G, double theta, double dt){
-        this.width=width;
-        this.height = height;
+    /**
+     * Base class for the definition of a model
+     * @param container the size of the universe
+     * @param G the constant of gravity
+     * @param theta the approximation parameter for the Barnes-Hutt-algorithm
+     * @param dt
+     */
+    public Model3D(Cuboid container, double G, double theta, double dt){
+        this.container = container;
         this.G = G;
         this.theta = theta;
         this.dt = dt;
@@ -62,18 +73,10 @@ public abstract class Model {
      ***********************
      */
 
-    public int getWidth(){
-        return this.width;
-    }
-
-    public int getHeight(){
-        return this.height;
-    }
-
+    public Cuboid getContainer(){ return this.container; }
     public double getTheta(){
         return this.theta;
     }
-
     public List<Particle> getParticles(){
         return this.particles;
     }
@@ -94,6 +97,7 @@ public abstract class Model {
     public double acceleration(int mass, double r){
         return mass*gravityLaw.apply(r);
     }
+
     /*
      ******************************
      ****     private methods   ***
@@ -116,9 +120,9 @@ public abstract class Model {
     public String toString() {
         String out = "Basic Model for a particle gravity simulation\n";
         out+="Number of particles: "+this.particles.size()+"\n";
-        if (this.qt!=null) {
-            out += "Total mass: " +qt.getMass()+"\n";
-            out+= "centered at: "+qt.getCenterOfMass().toString()+"\n";
+        if (this.ot!=null) {
+            out += "Total mass: " +ot.getMass()+"\n";
+            out+= "centered at: "+ot.getCenterOfMass().toString()+"\n";
         }
         return out;
     }

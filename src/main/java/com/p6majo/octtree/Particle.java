@@ -16,6 +16,7 @@ public class Particle implements ObjectIn3DSpace {
      *********************************************
      */
     private Vector3D position;
+    private double mass;
 
 
     /*
@@ -24,8 +25,24 @@ public class Particle implements ObjectIn3DSpace {
      **********************************************
      */
 
-    public Particle(Vector3D low, Vector3D high){
-        this.position = this.randomPosition(low,high);
+    /**
+     * Create a particle at the provided position with a random mass between 0 .. 10
+     *
+     * @param position
+     */
+    public Particle(Vector3D position){
+        this(position,Math.random()*10);
+    }
+
+    /**
+     * Create a particle at the provided position and mass
+     *
+     * @param position
+     * @param mass
+     */
+    public Particle(Vector3D position,double mass){
+        this.position = position;
+        this.mass = mass;
     }
 
 
@@ -78,6 +95,9 @@ public class Particle implements ObjectIn3DSpace {
     public Vector3D getPosition() {
         return this.position;
     }
+
+    @Override
+    public double getMass() { return this.mass; }
     /*
      ***********************************************
      ***           toString             ************
@@ -87,6 +107,25 @@ public class Particle implements ObjectIn3DSpace {
     @Override
     public String toString() {
         return "P"+position.toString();
+    }
+
+
+    /**
+     * Return a Particle at a random position inside a given cuboid with a random mass between 0 .. 10
+     * @param range
+     * @return
+     */
+    public static Particle random(Cuboid range){
+        return new Particle(range.randomPosition());
+    }
+
+    /**
+     * Return a Particle at a random position inside a given cuboid with a given mass
+     * @param range
+     * @return
+     */
+    public static Particle random(Cuboid range,double mass){
+        return new Particle(range.randomPosition(),mass);
     }
 
 }

@@ -104,7 +104,9 @@ public class Cuboid {
      *****************************
      */
 
-
+    public Vector3D randomPosition(){
+        return new Vector3D(low.getX()+Math.random()*getLength(),low.getY()+Math.random()*getWidth(),low.getZ()+Math.random()*getHeight());
+    }
 
 
     /**
@@ -196,7 +198,7 @@ public class Cuboid {
 
     @Override
     public String toString() {
-        return "Cuboid: "+low.toString()+"-"+high.toString();
+        return "cuboid: "+low.toString()+"-"+high.toString();
     }
 
     /*
@@ -214,4 +216,5 @@ public class Cuboid {
         }
         return new Cuboid(new Vector3D(coords[0],coords[2],coords[4]),new Vector3D(coords[1],coords[3],coords[5]));
     }
+
 }

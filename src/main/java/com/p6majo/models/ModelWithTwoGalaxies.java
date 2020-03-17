@@ -1,6 +1,9 @@
-package com.p6majo.particlesimulation;
+package com.p6majo.models;
 
-import java.util.Random;
+import com.p6majo.particlesimulation.Galaxy;
+import com.p6majo.particlesimulation.Vector;
+
+import java.awt.*;
 import java.util.function.Function;
 
 /**
@@ -9,12 +12,11 @@ import java.util.function.Function;
  * @version 2020=03-11
  *
  */
-public class ModelWithFixedCenter  extends Model{
+public class ModelWithTwoGalaxies extends Model{
 
     public double G = 1.;
-    public double theta = 2.; //acccuracy parameter for the Barnes-Hutt algorithm
-    public double dt = 0.1;
-    public int particleNumber = 10000;
+    public double theta = 0.5; //acccuracy parameter for the Barnes-Hutt algorithm
+    public double dt = 0.01;
 
     public Function<Double,Double> gravityLaw =new Function<Double,Double>(){
         @Override
@@ -35,34 +37,18 @@ public class ModelWithFixedCenter  extends Model{
      *********************
      */
 
-    public ModelWithFixedCenter(int width, int height,double G, double theta, double dt){
+    public ModelWithTwoGalaxies(int width, int height,double G,double theta,double dt){
         super(width,height,G,theta,dt);
 
-        for(int i = 0;i<particleNumber;i++){
-            Particle p = newRndParticle();
-            super.particles.add(p);
-        }
 
-        //add central star
-        super.particles.add(new Particle(this.width/2,this.height/2,10000,true));
 
-        //calculate velocities
+        Galaxy galaxy1 = new Galaxy(new Vector(width/4,height/3),new Vector(-100,0),height/4,5000,1000, Color.CYAN,-1);
+        Galaxy galaxy2 = new Galaxy(new Vector(3*width/4,2*height/3),new Vector(100,0),height/4,5000,1000, Color.ORANGE,1);
+        this.particles.addAll(galaxy1.getParticles());
+        this.particles.addAll(galaxy2.getParticles());
 
-        Rect boundary = new Rect(width/2,height/2,width/2,height/2);
-
-        this.qt = new QuadTree(this,boundary, 1,null,0);
-        for(int i = 0; i< particles.size(); i++)
-            qt.insert(particles.get(i));
-
-        //Calculate the mass distribution through the quad tree
-        qt.ComputeMassDistribution();
-
-        //setup Geschwindigkeit : v^2 = GM/r
-
-        for (Particle particle : particles) {
-            particle.setVel(qt.getMass(),qt.getCenterOfMass());
-        }
-
+        System.out.println(galaxy1.toString());
+        System.out.println(galaxy2.toString());
 
     }
 
@@ -91,13 +77,6 @@ public class ModelWithFixedCenter  extends Model{
      ******************************
      */
 
-    private Particle newRndParticle(){
-        rnd = new Random();
-        double r = rnd.nextDouble()*this.height/2;
-        double phi =  rnd.nextDouble()*2.*Math.PI;
-        return new Particle(this.width/2+r*Math.cos(phi),this.height/2+r*Math.sin(phi));
-    }
-
     /*
      ******************************
      ****     overrides         ***
@@ -112,7 +91,7 @@ public class ModelWithFixedCenter  extends Model{
 
     @Override
     public String toString() {
-        String out = "Dust disc with central star\n";
+        String out = "Galaxy model \n";
         out+="Number of particles: "+this.particles.size()+"\n";
         if (this.qt!=null) {
             out += "Total mass: " +qt.getMass()+"\n";

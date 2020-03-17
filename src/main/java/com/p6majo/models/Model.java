@@ -1,6 +1,11 @@
-package com.p6majo.particlesimulation;
+package com.p6majo.models;
 
-import java.awt.*;
+import com.p6majo.particlesimulation.Particle;
+import com.p6majo.particlesimulation.QuadTree;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 
 /**
@@ -9,11 +14,9 @@ import java.util.function.Function;
  * @version 2020=03-11
  *
  */
-public class ModelWithTwoGalaxies extends Model{
+public abstract class Model {
 
-    public double G = 1.;
-    public double theta = 0.5; //acccuracy parameter for the Barnes-Hutt algorithm
-    public double dt = 0.01;
+    public int particleNumber = 10000;
 
     public Function<Double,Double> gravityLaw =new Function<Double,Double>(){
         @Override
@@ -27,6 +30,17 @@ public class ModelWithTwoGalaxies extends Model{
      **********************
      */
 
+    protected final int width;
+    protected final int height;
+    protected final Random rnd;
+    protected final ArrayList<Particle> particles;
+    protected  final double G ;
+    protected final double theta; //acccuracy parameter for the Barnes-Hutt algorithm
+    public final double dt;
+
+
+    protected QuadTree qt ;
+
 
     /*
      *********************
@@ -34,18 +48,15 @@ public class ModelWithTwoGalaxies extends Model{
      *********************
      */
 
-    public ModelWithTwoGalaxies(int width, int height,double G,double theta,double dt){
-        super(width,height,G,theta,dt);
+    public Model(int width,int height, double G, double theta, double dt){
+        this.width=width;
+        this.height = height;
+        this.G = G;
+        this.theta = theta;
+        this.dt = dt;
 
-
-
-        Galaxy galaxy1 = new Galaxy(new Vector(width/4,height/3),new Vector(-100,0),height/4,5000,1000, Color.CYAN,-1);
-        Galaxy galaxy2 = new Galaxy(new Vector(3*width/4,2*height/3),new Vector(100,0),height/4,5000,1000, Color.ORANGE,1);
-        this.particles.addAll(galaxy1.getParticles());
-        this.particles.addAll(galaxy2.getParticles());
-
-        System.out.println(galaxy1.toString());
-        System.out.println(galaxy2.toString());
+        rnd = new Random();
+        particles = new ArrayList<>();
 
     }
 
@@ -54,6 +65,22 @@ public class ModelWithTwoGalaxies extends Model{
      ****       getter   ***
      ***********************
      */
+
+    public int getWidth(){
+        return this.width;
+    }
+
+    public int getHeight(){
+        return this.height;
+    }
+
+    public double getTheta(){
+        return this.theta;
+    }
+
+    public List<Particle> getParticles(){
+        return this.particles;
+    }
 
 
     /*
@@ -68,6 +95,9 @@ public class ModelWithTwoGalaxies extends Model{
      *****************************
      */
 
+    public double acceleration(int mass, double r){
+        return mass*gravityLaw.apply(r);
+    }
     /*
      ******************************
      ****     private methods   ***
@@ -88,7 +118,7 @@ public class ModelWithTwoGalaxies extends Model{
 
     @Override
     public String toString() {
-        String out = "Galaxy model \n";
+        String out = "Basic Model for a particle gravity simulation\n";
         out+="Number of particles: "+this.particles.size()+"\n";
         if (this.qt!=null) {
             out += "Total mass: " +qt.getMass()+"\n";

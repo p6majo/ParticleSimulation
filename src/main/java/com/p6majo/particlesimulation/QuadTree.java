@@ -1,5 +1,7 @@
 package com.p6majo.particlesimulation;
 
+import com.p6majo.models.Model;
+
 import java.util.ArrayList;
 import java.util.List;
 

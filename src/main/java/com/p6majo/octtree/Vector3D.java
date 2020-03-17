@@ -84,8 +84,12 @@ public class Vector3D {
 
 
     /******************************/
-    /****     toString()        ***/
+    /****     statics           ***/
     /******************************/
+
+    public static Vector3D getNULL() {
+        return new Vector3D(0, 0, 0);
+    }
 
     public static Vector3D random(double maxX, double maxY, double maxZ){
         return new Vector3D(Math.random()*maxX,Math.random()*maxY,Math.random()*maxZ);
