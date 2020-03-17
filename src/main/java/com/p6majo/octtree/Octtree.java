@@ -6,6 +6,8 @@ import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 /**
+ * The Octtree is a tree that contains eight subtrees at each non-empty node. It is used to effectively store particles
+ * of a three dimensional space. The space is divided into eight subspaces, represented by the subtrees.
  * @author p6majo
  * @version 1.0
  * @date 2019-08-26
@@ -20,6 +22,8 @@ public class Octtree<O extends ObjectIn3DSpace>{
 
     //number of objects per node
     public int N = 4;
+
+    //List of all particles contained in the tree and its subtrees
     public List<O> content = null;
 
     //boundaries

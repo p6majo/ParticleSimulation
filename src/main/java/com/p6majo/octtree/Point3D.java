@@ -5,7 +5,7 @@ package com.p6majo.octtree;
  * @version 1.0
  * @date 2019-08-26
  */
-public class Point3D {
+public class Point3D  {
 
 
     /**********************/
@@ -82,4 +82,12 @@ public class Point3D {
         return "("+String.format("%.2f",x)+"|"+String.format("%.2f",y)+"|"+String.format("%.2f",z)+")";
     }
 
+
+    /******************************/
+    /****     toString()        ***/
+    /******************************/
+
+    public static Point3D random(double maxX,double maxY,double maxZ){
+        return new Point3D(Math.random()*maxX,Math.random()*maxY,Math.random()*maxZ);
+    }
 }
