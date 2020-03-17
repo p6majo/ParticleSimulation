@@ -5,7 +5,7 @@ package com.p6majo.octtree;
  * @version 1.0
  * @date 2019-08-26
  */
-public class Point3D  {
+public class Vector3D {
 
 
     /**********************/
@@ -19,7 +19,7 @@ public class Point3D  {
     /***  constructors ***/
     /*********************/
 
-    public Point3D(double x,double y,double z){
+    public Vector3D(double x, double y, double z){
         this.x = x;
         this.y = y;
         this.z = z;
@@ -42,27 +42,27 @@ public class Point3D  {
     /****     public methods    ***/
     /******************************/
 
-    public double getDistance(Point3D point){
+    public double getDistance(Vector3D point){
         return Math.sqrt(directionTo(point).getNorm2());
     }
 
-    public Point3D directionTo(Point3D point){
-        return new Point3D(point.x-x,point.y-y,point.z-z);
+    public Vector3D directionTo(Vector3D point){
+        return new Vector3D(point.x-x,point.y-y,point.z-z);
     }
 
     public double getNorm2(){
         return this.x*this.x+this.y*this.y+this.z*this.z;
     }
 
-    public static Point3D midPoint(Point3D one, Point3D two){
-        return new Point3D((one.x+two.x)/2,(one.y+two.y)/2,(one.z+two.z)/2);
+    public static Vector3D midPoint(Vector3D one, Vector3D two){
+        return new Vector3D((one.x+two.x)/2,(one.y+two.y)/2,(one.z+two.z)/2);
     }
 
-    public Point3D shift(double x, double y, double z){
-        return new Point3D(this.x+x,this.y+y,this.z+z);
+    public Vector3D shift(double x, double y, double z){
+        return new Vector3D(this.x+x,this.y+y,this.z+z);
     }
 
-    public Point3D shift (Point3D shift){ return new Point3D(this.x+shift.x,this.y+shift.y,this.z+shift.z); }
+    public Vector3D shift (Vector3D shift){ return new Vector3D(this.x+shift.x,this.y+shift.y,this.z+shift.z); }
 
     /******************************/
     /****     private methods   ***/
@@ -87,7 +87,7 @@ public class Point3D  {
     /****     toString()        ***/
     /******************************/
 
-    public static Point3D random(double maxX,double maxY,double maxZ){
-        return new Point3D(Math.random()*maxX,Math.random()*maxY,Math.random()*maxZ);
+    public static Vector3D random(double maxX, double maxY, double maxZ){
+        return new Vector3D(Math.random()*maxX,Math.random()*maxY,Math.random()*maxZ);
     }
 }

@@ -7,8 +7,8 @@ class OcttreeTest extends TestCase {
 
     void testAddObject() {
 
-        Point3D low = new Point3D(0,0,0)
-        Point3D high = new Point3D(100,100,100)
+        Vector3D low = new Vector3D(0,0,0)
+        Vector3D high = new Vector3D(100,100,100)
 
         octtree = new Octtree<>(low,high)
         for (int i = 0; i < 10; i++) {

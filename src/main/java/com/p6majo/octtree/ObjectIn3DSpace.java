@@ -6,5 +6,5 @@ package com.p6majo.octtree;
  * @date 2019-08-26
  */
 public interface ObjectIn3DSpace {
-    public Point3D getPosition();
+    public Vector3D getPosition();
 }

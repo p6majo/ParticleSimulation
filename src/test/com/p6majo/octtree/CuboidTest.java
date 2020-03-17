@@ -1,6 +1,5 @@
 package com.p6majo.octtree;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,7 +55,7 @@ public class CuboidTest {
         System.out.println("Cuboid " + one.toString());
         int count = 0;
         for (int i = 0; i < 1000; i++) {
-            Point3D point = Point3D.random(100,200,300);
+            Vector3D point = Vector3D.random(100,200,300);
             if (one.contains(point))
                 System.out.println("Contained: " + point.toString());
            else
@@ -68,17 +67,9 @@ public class CuboidTest {
 
     @Test
     public void intersects() {
+        System.out.println("Test for intersection between " + one.toString() + " and " + two.toString());
+        System.out.println(one.intersects(two));
+        System.out.println("The intersection cuboid is given by " + one.getIntersection(two) + " or\n" + two.getIntersection(one));
     }
 
-    @Test
-    public void getIntersection() {
-    }
-
-    @Test
-    public void testToString() {
-    }
-
-    @Test
-    public void random() {
-    }
 }

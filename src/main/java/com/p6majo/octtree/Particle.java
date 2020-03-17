@@ -15,7 +15,7 @@ public class Particle implements ObjectIn3DSpace {
      ***           Attributes           **********
      *********************************************
      */
-    private Point3D position;
+    private Vector3D position;
 
 
     /*
@@ -24,7 +24,7 @@ public class Particle implements ObjectIn3DSpace {
      **********************************************
      */
 
-    public Particle(Point3D low,Point3D high){
+    public Particle(Vector3D low, Vector3D high){
         this.position = this.randomPosition(low,high);
     }
 
@@ -51,7 +51,7 @@ public class Particle implements ObjectIn3DSpace {
      ***********************************************
      */
 
-    public void changePosition(Point3D newPosition){
+    public void changePosition(Vector3D newPosition){
         this.position = newPosition;
     }
 
@@ -61,11 +61,11 @@ public class Particle implements ObjectIn3DSpace {
      ***********************************************
      */
 
-    private Point3D randomPosition(Point3D low, Point3D high){
+    private Vector3D randomPosition(Vector3D low, Vector3D high){
         double x = Utils.map(Math.random(),0,1,low.getX(),high.getX());
         double y = Utils.map(Math.random(),0,1,low.getY(),high.getY());
         double z = Utils.map(Math.random(),0,1,low.getZ(),high.getZ());
-        return new Point3D(x,y,z);
+        return new Vector3D(x,y,z);
     }
 
     /*
@@ -75,7 +75,7 @@ public class Particle implements ObjectIn3DSpace {
      */
 
     @Override
-    public Point3D getPosition() {
+    public Vector3D getPosition() {
         return this.position;
     }
     /*

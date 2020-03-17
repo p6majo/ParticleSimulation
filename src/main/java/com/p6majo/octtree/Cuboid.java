@@ -2,7 +2,6 @@ package com.p6majo.octtree;
 
 import com.p6majo.logger.Logger;
 import com.p6majo.logger.Logger.Level;
-import com.p6majo.particlesimulation.Circle;
 
 /**
  * The class Cuboid is a representative of a subspace of the total space
@@ -13,16 +12,14 @@ import com.p6majo.particlesimulation.Circle;
  *  */
 public class Cuboid {
 
-
-
     /*
      **********************
      ***   attributes   ***
      **********************
      */
 
-    private Point3D low;
-    private Point3D high;
+    private Vector3D low;
+    private Vector3D high;
 
     /*
      *********************
@@ -35,7 +32,7 @@ public class Cuboid {
      * @param low lower, left, front corner
      * @param high upper, right, back corner
      */
-    public Cuboid(Point3D low, Point3D high){
+    public Cuboid(Vector3D low, Vector3D high){
 
         //make sure, the low and high parameters are well defined
         if (high.getX()<low.getX()||high.getY()<low.getY()||high.getZ()<low.getZ())
@@ -50,11 +47,11 @@ public class Cuboid {
      ****       getter   ***
      ***********************
      */
-    public Point3D getLow(){
+    public Vector3D getLow(){
         return this.low;
     }
 
-    public Point3D getHigh(){
+    public Vector3D getHigh(){
         return this.high;
     }
 
@@ -107,15 +104,17 @@ public class Cuboid {
      *****************************
      */
 
+
+
+
     /**
      * This method checks, whether a point is contained inside the Domain.
-     *
      * inklusiv nach links, exklusiv nach rechts, um Ueberlappung zu vermeiden (nicht sonderlich wichtig)
      *
      * @param point
      * @return True, if inside, false otherwise
      */
-    public boolean contains(Point3D point){
+    public boolean contains(Vector3D point){
         return(point.getX() >= this.low.getX() &&
                 point.getX() < this.high.getX() &&
                 point.getY() >= this.low.getY() &&
@@ -156,11 +155,19 @@ public class Cuboid {
         double backmin = Math.min(this.getBack(),other.getBack());
 
         if  (leftmax<rightmin && frontmax<backmin && bottommax<topmin)
-            return new Cuboid(new Point3D(leftmax,frontmax,bottommax),new Point3D(rightmin,backmin,topmin));
+            return new Cuboid(new Vector3D(leftmax,frontmax,bottommax),new Vector3D(rightmin,backmin,topmin));
         else
             return null;
     }
 
+    /**
+     * Shift the cuboid by the given shift vector
+     * @param shift
+     * @return shifted cuboid
+     */
+    public Cuboid shift(Vector3D shift){
+        return new Cuboid(low.shift(shift),high.shift(shift));
+    }
 
     /*
      ******************************
@@ -205,6 +212,6 @@ public class Cuboid {
             coords[2*i+1] = Math.random() * maxX;
             if (coords[2*i] > coords[2*i+1]) swap(coords, 2*i, 2*i+1);
         }
-        return new Cuboid(new Point3D(coords[0],coords[2],coords[4]),new Point3D(coords[1],coords[3],coords[5]));
+        return new Cuboid(new Vector3D(coords[0],coords[2],coords[4]),new Vector3D(coords[1],coords[3],coords[5]));
     }
 }

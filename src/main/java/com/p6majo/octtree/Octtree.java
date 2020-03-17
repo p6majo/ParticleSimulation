@@ -27,10 +27,14 @@ public class Octtree<O extends ObjectIn3DSpace>{
     public List<O> content = null;
 
     //boundaries
-    private Point3D low;
-    private Point3D high;
+    private Vector3D low;
+    private Vector3D high;
+
+    //center of mass
+    private Vector3D centerOfMass;
 
     private final boolean root;
+    private int level;
 
     //subtrees, each branch splits into eight branches which are represented by {000,001,010,011,100,101,110,111}
     private Octtree<O>[] subtrees = new Octtree[8];
@@ -45,11 +49,10 @@ public class Octtree<O extends ObjectIn3DSpace>{
      * @param low - collection of all the min values of the coordinates
      * @param high  collection of all the max values of the coordiantes
      */
-    public Octtree(Point3D low, Point3D high){
+    public Octtree(Vector3D low, Vector3D high){
 
         this.low = low;
         this.high = high;
-
         this.root = true;
 
         this.content = null;
@@ -60,10 +63,11 @@ public class Octtree<O extends ObjectIn3DSpace>{
     /**
      *  Construct an empty octtree representing a box in 3D space.
      *  The box is represented by the minValues and maxValues
-     * @param low - collection of all the min values of the coordinates
+     * @param low  collection of all the min values of the coordinates
      * @param high  collection of all the max values of the coordiantes
+     * @param root explicitly state, whether the node is root or not
      */
-    private Octtree(Point3D low, Point3D high,boolean root){
+    private Octtree(Vector3D low, Vector3D high, boolean root){
 
         this.low = low;
         this.high = high;
@@ -109,13 +113,13 @@ public class Octtree<O extends ObjectIn3DSpace>{
      * @return
      */
     public void addObject(O object){
-        Point3D mid = Point3D.midPoint(low,high);
+        Vector3D mid = Vector3D.midPoint(low,high);
 
         if (this.content==null){
             this.content = new ArrayList<O>();
             this.content.add(object);
 
-            Point3D sh = low.directionTo(mid);
+            Vector3D sh = low.directionTo(mid);
 
             subtrees[0] = new Octtree(low,mid,false); //000
             subtrees[1] = new Octtree(low.shift(0,0,sh.getZ()),mid.shift(0,0,sh.getZ()),false); //001
@@ -133,7 +137,7 @@ public class Octtree<O extends ObjectIn3DSpace>{
         }
         else{
             //find correct subtree
-            Point3D position = object.getPosition();
+            Vector3D position = object.getPosition();
             int index  = 0;
             if (position.getX()>mid.getX()) index+=4;
             if (position.getY()>mid.getY()) index+=2;
@@ -188,7 +192,7 @@ public class Octtree<O extends ObjectIn3DSpace>{
     }
 
     private boolean isContained(O object){
-        Point3D position = object.getPosition();
+        Vector3D position = object.getPosition();
         return (position.getX()<this.high.getX() && position.getX()>=this.low.getX()
         && position.getY()<this.high.getY() && position.getY()>=this.low.getY()
                 && position.getZ()<this.high.getZ() && position.getZ()>=this.low.getZ());
