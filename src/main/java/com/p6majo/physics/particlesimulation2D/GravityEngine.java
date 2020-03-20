@@ -1,4 +1,4 @@
-package com.p6majo.particlesimulation;
+package com.p6majo.physics.particlesimulation2D;
 
 import com.p6majo.models.Model;
 
@@ -56,8 +56,6 @@ public class GravityEngine {
     public List<Particle> getParticles() {
         return particles;
     }
-
-
     public List<BarnesHutCenter> getBarnesHutCenters(){
         return this.barnesHutCenters;
     }

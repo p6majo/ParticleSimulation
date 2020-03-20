@@ -1,14 +1,8 @@
 package com.p6majo.models;
 
 import com.p6majo.octtree.Cuboid;
-import com.p6majo.octtree.Octtree;
 import com.p6majo.octtree.Particle;
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Function;
+import com.p6majo.octtree.Vector3D;
 
 /**
  * A container to keep all the parameters and initial data of the simulation
@@ -16,28 +10,16 @@ import java.util.function.Function;
  * @version 2020=03-11
  *
  */
-public abstract class Model3D {
+public class Model3DGalaxy extends Model3D{
 
-    public int particleNumber = 10000;
-    public Function<Double,Double> gravityLaw = distance -> 1./distance/distance;
+    public int particleNumber = 100;
+
+
     /*
      **********************
      ***   attributes   ***
      **********************
      */
-
-    protected Cuboid container;
-
-    protected final Random rnd;
-    public final double G;
-    protected final double theta ; //acccuracy parameter for the Barnes-Hutt algorithm
-    protected ArrayList<Particle> particles;
-    public final double dt;
-
-    public final double rmin = 0.001; //UV cutoff for gravity, this should be replaced later by collisions, once objects touch each other
-
-
-    protected Octtree ot; //this octtree is needed to calculate the mass distribution, it is invoked without model
 
     /*
      *********************
@@ -51,16 +33,33 @@ public abstract class Model3D {
      * @param theta the approximation parameter for the Barnes-Hutt-algorithm
      * @param dt
      */
-    public Model3D( double G, double theta, double dt){
+    public Model3DGalaxy(double G, double theta, double dt){
+        super(G,theta,dt);
 
-        this.G = G;
-        this.theta = theta;
-        this.dt = dt;
+        double centralMass =10000;
+        Vector3D low = this.container.getLow();
+        Vector3D high = this.container.getHigh();
 
-        this.container = this.defineContainer();
+        Vector3D mid = this.container.getMiddle();
+        this.particles.add(new Particle(mid,Vector3D.getZERO(),centralMass,true));
 
-        rnd = new Random();
-        particles = new ArrayList<>();
+        for (int i = 1; i < particleNumber; i++) {
+
+
+            double r = Math.sqrt(Math.random()) * 500 + 1000; //get more stars further out
+            double phi = Math.random() * 2. * Math.PI;
+            double z = Math.random()*50;
+
+            Vector3D pos = new Vector3D(r * Math.cos(phi), r * Math.sin(phi), z);
+            Vector3D omega = new Vector3D(0, 0, 1);
+            Vector3D v = omega.cross(pos);
+            v = v.mul(Math.sqrt(G * centralMass / r / v.getNorm2()));
+
+            particles.add(new Particle(pos,v,Math.random()*3));
+        }
+
+        System.out.println(this.toString());
+
 
     }
 
@@ -70,13 +69,6 @@ public abstract class Model3D {
      ***********************
      */
 
-    public Cuboid getContainer(){ return this.container; }
-    public double getTheta(){
-        return this.theta;
-    }
-    public List<Particle> getParticles(){
-        return this.particles;
-    }
 
 
     /*
@@ -85,7 +77,6 @@ public abstract class Model3D {
      ************************
      */
 
-
     /*
      *****************************
      ***     public methods    ***
@@ -93,18 +84,11 @@ public abstract class Model3D {
      */
 
     public double acceleration(double mass, double r){
-        return G*mass*gravityLaw.apply(r);
+        return mass*gravityLaw.apply(r);
     }
 
 
-    /**
-     * This method is called by the constructor of the Model3D
-     * to set the container of the simulation. Particles that fly outside of the container are lost.
-     * Make sure, that the container is large enough to hold all the interesting parts of the simulation.
-     *
-     * @return the container of the simulation
-     */
-    public abstract Cuboid defineContainer();
+
     /*
      ******************************
      ****     private methods   ***
@@ -116,6 +100,20 @@ public abstract class Model3D {
      ****     overrides         ***
      ******************************
      */
+
+    /**
+     * This method is called by the constructor of the Model3D
+     * to set the container of the simulation. Particles that fly outside of the container are lost.
+     * Make sure, that the container is large enough to hold all the interesting parts of the simulation.
+     *
+     * @return the container of the simulation
+     */
+    @Override
+    public Cuboid defineContainer() {
+        Vector3D low = new Vector3D(-5000,-5000,-5000);
+        Vector3D high = new Vector3D(5000,5000,5000);
+        return new Cuboid(low,high);
+    }
 
     /*
      ******************************

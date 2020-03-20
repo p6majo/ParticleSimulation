@@ -20,6 +20,7 @@ public class Cuboid {
 
     private Vector3D low;
     private Vector3D high;
+    private double averageSize;
 
     /*
      *********************
@@ -40,6 +41,8 @@ public class Cuboid {
 
         this.high = high;
         this.low = low;
+
+        this.averageSize = 1./3*(this.getWidth()+this.getHeight()+this.getLength());
     }
 
     /*
@@ -54,6 +57,8 @@ public class Cuboid {
     public Vector3D getHigh(){
         return this.high;
     }
+
+    public Vector3D getMiddle(){ return this.high.add(this.low).mul(0.5);}
 
     public double getLength(){
         return this.high.getX()-this.low.getX();
@@ -89,6 +94,10 @@ public class Cuboid {
 
     public double getBack(){
         return high.getY();
+    }
+
+    public double getAverageSize() {
+        return this.averageSize;
     }
 
 
@@ -168,7 +177,7 @@ public class Cuboid {
      * @return shifted cuboid
      */
     public Cuboid shift(Vector3D shift){
-        return new Cuboid(low.shift(shift),high.shift(shift));
+        return new Cuboid(low.add(shift),high.add(shift));
     }
 
     /*

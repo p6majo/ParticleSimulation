@@ -1,10 +1,9 @@
 package com.p6majo.models;
 
-import com.p6majo.particlesimulation.Particle;
-import com.p6majo.particlesimulation.QuadTree;
-import com.p6majo.particlesimulation.Rect;
+import com.p6majo.physics.particlesimulation2D.Particle;
+import com.p6majo.physics.particlesimulation2D.QuadTree;
+import com.p6majo.physics.particlesimulation2D.Rect;
 
-import java.util.Random;
 import java.util.function.Function;
 
 /**

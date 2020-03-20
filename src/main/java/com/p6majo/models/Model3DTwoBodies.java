@@ -1,8 +1,8 @@
 package com.p6majo.models;
 
 import com.p6majo.octtree.Cuboid;
-import com.p6majo.octtree.Octtree;
 import com.p6majo.octtree.Particle;
+import com.p6majo.octtree.Vector3D;
 
 
 import java.util.ArrayList;
@@ -16,28 +16,16 @@ import java.util.function.Function;
  * @version 2020=03-11
  *
  */
-public abstract class Model3D {
+public class Model3DTwoBodies extends Model3D{
 
-    public int particleNumber = 10000;
-    public Function<Double,Double> gravityLaw = distance -> 1./distance/distance;
+    public int particleNumber = 2;
+
+
     /*
      **********************
      ***   attributes   ***
      **********************
      */
-
-    protected Cuboid container;
-
-    protected final Random rnd;
-    public final double G;
-    protected final double theta ; //acccuracy parameter for the Barnes-Hutt algorithm
-    protected ArrayList<Particle> particles;
-    public final double dt;
-
-    public final double rmin = 0.001; //UV cutoff for gravity, this should be replaced later by collisions, once objects touch each other
-
-
-    protected Octtree ot; //this octtree is needed to calculate the mass distribution, it is invoked without model
 
     /*
      *********************
@@ -51,16 +39,21 @@ public abstract class Model3D {
      * @param theta the approximation parameter for the Barnes-Hutt-algorithm
      * @param dt
      */
-    public Model3D( double G, double theta, double dt){
+    public Model3DTwoBodies(double G, double theta, double dt){
+       super(G,theta,dt);
 
-        this.G = G;
-        this.theta = theta;
-        this.dt = dt;
+        Vector3D low = this.container.getLow();
+        Vector3D high = this.container.getHigh();
 
-        this.container = this.defineContainer();
+        Vector3D diag = high.sub(low);
+        Vector3D pos1 = low.add(diag.mul(2./5));
+        Vector3D pos2 = low.add(diag.mul(3./5));
+        Vector3D v1 = new Vector3D(110,0,0);
+        Vector3D v2 = new Vector3D(-110,0,0);
+       this.particles.add(new Particle(pos1,v1,500.));
+       this.particles.add(new Particle(pos2,v2,500.));
 
-        rnd = new Random();
-        particles = new ArrayList<>();
+
 
     }
 
@@ -70,13 +63,6 @@ public abstract class Model3D {
      ***********************
      */
 
-    public Cuboid getContainer(){ return this.container; }
-    public double getTheta(){
-        return this.theta;
-    }
-    public List<Particle> getParticles(){
-        return this.particles;
-    }
 
 
     /*
@@ -85,7 +71,6 @@ public abstract class Model3D {
      ************************
      */
 
-
     /*
      *****************************
      ***     public methods    ***
@@ -93,18 +78,11 @@ public abstract class Model3D {
      */
 
     public double acceleration(double mass, double r){
-        return G*mass*gravityLaw.apply(r);
+        return mass*gravityLaw.apply(r);
     }
 
 
-    /**
-     * This method is called by the constructor of the Model3D
-     * to set the container of the simulation. Particles that fly outside of the container are lost.
-     * Make sure, that the container is large enough to hold all the interesting parts of the simulation.
-     *
-     * @return the container of the simulation
-     */
-    public abstract Cuboid defineContainer();
+
     /*
      ******************************
      ****     private methods   ***
@@ -116,6 +94,20 @@ public abstract class Model3D {
      ****     overrides         ***
      ******************************
      */
+
+    /**
+     * This method is called by the constructor of the Model3D
+     * to set the container of the simulation. Particles that fly outside of the container are lost.
+     * Make sure, that the container is large enough to hold all the interesting parts of the simulation.
+     *
+     * @return the container of the simulation
+     */
+    @Override
+    public Cuboid defineContainer() {
+        Vector3D low = new Vector3D(-500,-500,-500);
+        Vector3D high = new Vector3D(500,500,500);
+        return new Cuboid(low,high);
+    }
 
     /*
      ******************************

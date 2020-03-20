@@ -2,7 +2,6 @@ package com.p6majo.octtree;
 
 import com.p6majo.logger.Logger;
 import com.p6majo.models.Model3D;
-import com.p6majo.particlesimulation.Particle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +105,7 @@ public class Octtree<O extends ObjectIn3DSpace>{
         this.root = true;
         this.n = n;
         this.divided = false;
+        this.centerOfMass = Vector3D.getZERO();
 
         this.content = new ArrayList<>();
         for (int i = 0; i < subtrees.length; i++)
@@ -119,11 +119,11 @@ public class Octtree<O extends ObjectIn3DSpace>{
     public boolean isEmpty(){ return this.content.size()==0; }
 
     public double getMass(){
-        return 0.;
+        return this.mass;
     }
 
     public Vector3D getCenterOfMass(){
-        return null;
+        return this.centerOfMass;
     }
 
     /**
@@ -226,20 +226,76 @@ public class Octtree<O extends ObjectIn3DSpace>{
     }
 
     /**
-     * Calculates the center of masses for each subtree
+     * Calculates the center of masses for each subtree and the total mass contained inside the cuboid
+     * represented by the octtree
+     *
      */
     public void computeMassDistribution(){
-        if (content.size()==0) {
-            this.centerOfMass = Vector3D.getNULL();
-            this.mass = 0.;
-        }
-        else if (content.size()<n){
+        this.centerOfMass = Vector3D.getZERO();
+        this.mass = 0.;
+        if (content.size()<=n){//center of mass for individual particles of the cuboid
             for (O o : content) {
-                //centerOfMass =
+                centerOfMass = centerOfMass.add(o.getPosition().mul(o.getMass()));
+                this.mass+=o.getMass();
             }
+            if (this.mass>0.)
+                this.centerOfMass = centerOfMass.mul(1./this.mass);
+        }
+        else{
+            //center of mass recursively determined
+            for (int i = 0; i < subtrees.length; i++) {
+                Octtree<O> subtree = subtrees[i];
+                if (subtree!=null) {
+                    subtree.computeMassDistribution();
+                    double subMass = subtree.getMass();
+                    Vector3D subCenter = subtree.getCenterOfMass();
+                    this.centerOfMass = this.centerOfMass.add(subCenter.mul(subMass));
+                    this.mass += subMass;
+                }
+            }
+            if (this.mass>0.)
+                this.centerOfMass = this.centerOfMass.mul(1./this.mass);
+        }
+    }
+
+    /**
+     * Calculate the acceleration for a given particle that results from the distribution of matter that is
+     * contained in the cuboid represented by the tree. The Parameter thetaMax serves as a criterion, whether
+     * all particles of the cuboid are considered separately or whether just the center of mass is used as an
+     * approximation.
+     *
+     * @param particle
+     * @return
+     */
+    public Vector3D calculateAcceleration(Particle particle){
+        //no particles in the tree
+        if (this.content.size()==0)
+            return Vector3D.getZERO();
+
+        double r = particle.getPosition().getDistance(this.centerOfMass);
+
+        if (r<model.rmin) //particle exactly at the center of mass
+            return Vector3D.getZERO(); //no self-interaction
+
+        double theta = 2.*this.boundary.getAverageSize()/r;
+
+        //cuboid is far away or only contains one particle
+        if (theta<model.getTheta()|| this.content.size()==1){
+          // Vector3D acceleration =  this.centerOfMass.add(particle.getPosition().mul(-1.)).mul(1./r).mul(model.acceleration(this.mass,r));
+          Vector3D acceleration =  this.centerOfMass.add(particle.getPosition().mul(-1.)).mul(1./r).mul(model.G*this.mass/r/r);
+
+            return acceleration;
+        }
+        else{
+            Vector3D acceleration = Vector3D.getZERO();
+            for (Octtree<O> subtree : subtrees) {
+                acceleration = acceleration.add(subtree.calculateAcceleration(particle));
+            }
+            return acceleration;
         }
 
     }
+
 
     /**
      * The Octtree is designed for holding moving objects. Once objects leave their bounding boxes, they should be added to different branches of the tree.
@@ -298,12 +354,12 @@ public class Octtree<O extends ObjectIn3DSpace>{
         Vector3D sh = low.directionTo(mid);
 
         subtrees[0] = new Octtree(model,low,mid,n,false); //000
-        subtrees[1] = new Octtree(model,low.shift(0,0,sh.getZ()),mid.shift(0,0,sh.getZ()),n,false); //001
-        subtrees[2] = new Octtree(model,low.shift(0,sh.getY(),0),mid.shift(0,sh.getY(),0),n,false); //010
-        subtrees[3] = new Octtree(model,low.shift(0,sh.getY(),sh.getZ()),mid.shift(0,sh.getY(),sh.getZ()),n,false); //011
-        subtrees[4] = new Octtree(model,low.shift(sh.getX(),0,0),mid.shift(sh.getX(),0,0),n,false); //100
-        subtrees[5] = new Octtree(model,low.shift(sh.getX(),0,sh.getZ()),mid.shift(sh.getX(),0,sh.getZ()),n,false);//101
-        subtrees[6] = new Octtree(model,low.shift(sh.getX(),sh.getY(),0),mid.shift(sh.getX(),sh.getY(),0),n,false);//110
+        subtrees[1] = new Octtree(model,low.add(0,0,sh.getZ()),mid.add(0,0,sh.getZ()),n,false); //001
+        subtrees[2] = new Octtree(model,low.add(0,sh.getY(),0),mid.add(0,sh.getY(),0),n,false); //010
+        subtrees[3] = new Octtree(model,low.add(0,sh.getY(),sh.getZ()),mid.add(0,sh.getY(),sh.getZ()),n,false); //011
+        subtrees[4] = new Octtree(model,low.add(sh.getX(),0,0),mid.add(sh.getX(),0,0),n,false); //100
+        subtrees[5] = new Octtree(model,low.add(sh.getX(),0,sh.getZ()),mid.add(sh.getX(),0,sh.getZ()),n,false);//101
+        subtrees[6] = new Octtree(model,low.add(sh.getX(),sh.getY(),0),mid.add(sh.getX(),sh.getY(),0),n,false);//110
         subtrees[7] = new Octtree(model,mid,high);//111
 
     }
@@ -337,8 +393,8 @@ public class Octtree<O extends ObjectIn3DSpace>{
                                 out += "\t" + nnntokens.nextToken() + "\n";
                             }
                         }
-                    else
-                        break;
+                        else
+                            break;
                 }
 
         }

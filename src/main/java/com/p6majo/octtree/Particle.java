@@ -16,7 +16,10 @@ public class Particle implements ObjectIn3DSpace {
      *********************************************
      */
     private Vector3D position;
+    private Vector3D velocity;
+    private Vector3D acceleration;
     private double mass;
+    private final boolean fixed;
 
 
     /*
@@ -31,18 +34,30 @@ public class Particle implements ObjectIn3DSpace {
      * @param position
      */
     public Particle(Vector3D position){
-        this(position,Math.random()*10);
+        this(position,Vector3D.getZERO(),Math.random()*10);
     }
 
+
+    public Particle(Vector3D position,Vector3D velocity){
+        this(position,velocity,Math.random()*10);
+    }
+
+
+    public Particle(Vector3D position,Vector3D velocity,double mass){
+        this(position,velocity,mass,false);
+    }
     /**
      * Create a particle at the provided position and mass
      *
      * @param position
      * @param mass
      */
-    public Particle(Vector3D position,double mass){
+    public Particle(Vector3D position,Vector3D velocity,double mass,boolean fixed){
         this.position = position;
+        this.velocity = velocity;
+        this.acceleration = Vector3D.getZERO();
         this.mass = mass;
+        this.fixed=fixed;
     }
 
 
@@ -52,7 +67,9 @@ public class Particle implements ObjectIn3DSpace {
      ***********************************************
      */
 
-
+    public boolean isFixed() {
+        return fixed;
+    }
 
     /*
      ***********************************************
@@ -60,7 +77,9 @@ public class Particle implements ObjectIn3DSpace {
      ***********************************************
      */
 
-
+    public void setAcceleration(Vector3D acceleration){
+        this.acceleration = acceleration;
+    }
 
     /*
      ***********************************************
@@ -70,6 +89,13 @@ public class Particle implements ObjectIn3DSpace {
 
     public void changePosition(Vector3D newPosition){
         this.position = newPosition;
+    }
+
+    public void update(double dt){
+            if (!fixed) {
+                this.velocity = this.velocity.add(this.acceleration.mul(dt));
+                this.position = this.position.add(this.velocity.mul(dt));
+            }
     }
 
     /*
@@ -125,7 +151,8 @@ public class Particle implements ObjectIn3DSpace {
      * @return
      */
     public static Particle random(Cuboid range,double mass){
-        return new Particle(range.randomPosition(),mass);
+        return new Particle(range.randomPosition(),Vector3D.getZERO(),mass);
     }
+
 
 }

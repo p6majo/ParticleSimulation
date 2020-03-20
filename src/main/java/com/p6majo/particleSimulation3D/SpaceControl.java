@@ -1,10 +1,15 @@
-package com.p6majo.physics.thomson;
+package com.p6majo.particleSimulation3D;
 
 import com.jogamp.opengl.util.FPSAnimator;
 import com.p6majo.genericguis.Flag;
 import com.p6majo.genericguis.ParameterGui;
 import com.p6majo.genericguis.ParameterGuiListener;
 import com.p6majo.parameterspace.Parameter;
+import com.p6majo.physics.thomson.ThomsonSimulation;
+import com.p6majo.physics.thomson.ThomsonView;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import static com.p6majo.physics.thomson.ThomsonSimulation.ForceLaw.artificial2d;
 import static com.p6majo.physics.thomson.ThomsonSimulation.ForceLaw.coulomb3d;
@@ -18,7 +23,7 @@ import static com.p6majo.physics.thomson.ThomsonSimulation.ForceLaw.coulomb3d;
  * @author p6majo
  * @version 2019-05-24
  */
-public class ThomsonControl implements ParameterGuiListener {
+public class SpaceControl implements ParameterGuiListener {
 
     /*
      *********************************************
@@ -27,9 +32,9 @@ public class ThomsonControl implements ParameterGuiListener {
      */
 
 
-    public FPSAnimator animator;
-    public ThomsonView thomsonView;
-    public ThomsonSimulation simulation;
+    public static FPSAnimator animator;
+    public static SpaceGui spaceGui;
+    public SpaceSimulation simulation;
     public ParameterGui paramGui;
 
     /*
@@ -38,27 +43,23 @@ public class ThomsonControl implements ParameterGuiListener {
      **********************************************
      */
 
-    public ThomsonControl(){
+    public SpaceControl(){
 
         //setup parameter gui
         paramGui = new ParameterGui(3,2,this);
 
-        paramGui.addParameter(new Parameter("Number of Charges",3,2,102,100));
-        paramGui.addParameter(new Parameter("Smallest Bound",10,0,100,100));
-        paramGui.addParameter(new Parameter("Largest Bound",90,0,100,100));
-
-        paramGui.addFlag(new Flag("2D force",true));
-        paramGui.addFlag(new Flag("3D force",false));
+        paramGui.addParameter(new Parameter("Zoom",135,10,135,1000));
+        paramGui.addParameter(new Parameter("NearShift",3000,0,10000,10000));
+        paramGui.addParameter(new Parameter("CameraOutPos",0,0,10000,10000));
 
         paramGui.display();
 
         //setup simulation
-        simulation = new ThomsonSimulation(3,3,0.03);
+        simulation = new SpaceSimulation();
 
-        //setup glview
+        spaceGui = new SpaceGui("Space Simulation",simulation);//The Gui that contains the GLCanvas
 
-        thomsonView = new ThomsonView("Thomson Problem Simulation",simulation);
-        animator = new FPSAnimator(thomsonView.getGLCanvas(),20);
+        animator = new FPSAnimator(spaceGui.getGLCanvas(),25);  //Create an animator that drives canvas' display() at the specified FPS
 
     }
 
@@ -117,11 +118,21 @@ public class ThomsonControl implements ParameterGuiListener {
      */
 
     public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new ThomsonControl();
-            }
+
+
+        java.awt.EventQueue.invokeLater(() -> {
+            new SpaceControl();
+            spaceGui.addWindowListener(new WindowAdapter(){
+                @Override
+                public void windowClosing(WindowEvent e){
+                    //use a dedicated thread to run the stop() to ensure that the animator stops before the program exits.
+                    new Thread(() -> {
+                        if (animator.isStarted())
+                            animator.stop();
+                            System.exit(0);
+                    }).start();
+                }
+            });
         });
 
     }
@@ -131,16 +142,14 @@ public class ThomsonControl implements ParameterGuiListener {
     public void valueChange(int index, double value){
 
         switch(index){
-            case 0: //number of charges
-                int n =(int) paramGui.getValue(0);
-                if (simulation.getNumber()!=n)
-                    simulation.setNumber(n);
+            case 0: //Zoom
+               spaceGui.getSpaceView().setZoom(paramGui.getValue(0));
                 break;
-            case 1: //change the value of the smallest bound length
-                simulation.setSmallestLength(paramGui.getValue(1)/100);
+            case 1: //nearShift
+                spaceGui.getSpaceView().setNearShift(paramGui.getValue(1));
                 break;
             case 2: //change the value of the largest bound length
-                simulation.setLargestLength(paramGui.getValue(2)/100);
+                spaceGui.getSpaceView().setCameraOutPos(paramGui.getValue(2));
                 break;
         }
     }
@@ -149,12 +158,14 @@ public class ThomsonControl implements ParameterGuiListener {
     public void flagValueChange(int index, boolean selected) {
         if (selected) {
             switch (index) {
+                /*
                 case 0: //2d
                     simulation.setForceLaw(artificial2d);
                     break;
                 case 1: //3d
                     simulation.setForceLaw(coulomb3d);
                     break;
+                 */
             }
             ;
         }
@@ -171,7 +182,7 @@ public class ThomsonControl implements ParameterGuiListener {
                 break;
             case stop:
                 simulation.stop();
-                animator.stop();
+                animator.start();
                 break;
             case exit:
                 simulation.stop();
