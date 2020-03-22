@@ -4,6 +4,7 @@ import com.p6majo.gravityengines.GravityEngine3D;
 import com.p6majo.models.Model3D;
 import com.p6majo.models.Model3DGalaxy;
 import com.p6majo.models.Model3DTwoBodies;
+import com.p6majo.models.Model3DTwoGalaxies;
 import com.p6majo.octtree.Cuboid;
 import com.p6majo.octtree.Particle;
 import com.p6majo.octtree.Vector3D;
@@ -39,11 +40,10 @@ public class SpaceSimulation {
      */
 
     public SpaceSimulation() {
-        Vector3D low = new Vector3D(-500,-500,-500);
-        Vector3D high = new Vector3D(500,500,500);
-        this.container = new Cuboid(low,high);
-        //model = new Model3DTwoBodies(20000,1,0.05);
-        model = new Model3DGalaxy(10000,2,0.05);
+
+       //model = new Model3DTwoBodies(20000,1,0.05);
+        //model = new Model3DGalaxy(10000,2,0.05);
+        model = new Model3DTwoGalaxies(10000,2,0.1);
         this.container = model.getContainer();
         engine = new GravityEngine3D(model);
     }

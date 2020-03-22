@@ -277,9 +277,9 @@ public class SpaceView extends JPanel implements GLEventListener, MouseMotionLis
          //eyepoint (x,y,z),lookatpoint (x,y,z), updirection (x,y,z)
         //move eyepoint 50 percent of the total depth before the box
       // glu.gluLookAt(eye.getX(),eye.getY(),eye.getZ(), middle.getX(), middle.getY(), middle.getZ(), 0, 0, 1);
-        //opening angle, ratio of height and width, near and far
-        glu.gluLookAt(-1000+cameraOutPos/10, 0, 1000,
-                0,1000-nearShift/10, 0,
+
+        glu.gluLookAt(low.getX()-cameraOutPos/10, 0, 0,
+                middle.getX(),middle.getY(),middle.getZ(),
                 0,  1,0);
 
 
