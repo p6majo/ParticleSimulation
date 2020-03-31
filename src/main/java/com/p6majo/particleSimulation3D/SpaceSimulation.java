@@ -3,11 +3,9 @@ package com.p6majo.particleSimulation3D;
 import com.p6majo.gravityengines.GravityEngine3D;
 import com.p6majo.models.Model3D;
 import com.p6majo.models.Model3DGalaxy;
-import com.p6majo.models.Model3DTwoBodies;
 import com.p6majo.models.Model3DTwoGalaxies;
 import com.p6majo.octtree.Cuboid;
 import com.p6majo.octtree.Particle;
-import com.p6majo.octtree.Vector3D;
 
 
 import java.util.*;
@@ -42,8 +40,8 @@ public class SpaceSimulation {
     public SpaceSimulation() {
 
        //model = new Model3DTwoBodies(20000,1,0.05);
-        //model = new Model3DGalaxy(10000,2,0.05);
-        model = new Model3DTwoGalaxies(10000,2,0.1);
+       // model = new Model3DGalaxy(10000,1,0.005);
+       model = new Model3DTwoGalaxies(1000000,1,0.01);
         this.container = model.getContainer();
         engine = new GravityEngine3D(model);
     }
@@ -88,7 +86,7 @@ public class SpaceSimulation {
             public void run() {
                 engine.timestep();
             }
-        },0,(int) (model.dt*1000));
+        },0,(int) (10));
     }
 
     public void stop(){

@@ -2,7 +2,7 @@ package com.p6majo.models;
 
 import com.p6majo.gravityengines.GravityEngine3D;
 import com.p6majo.octtree.Cuboid;
-import com.p6majo.octtree.Vector3D;
+import com.p6majo.linalg.Vector3D;
 import org.junit.Before;
 import org.junit.Test;
 

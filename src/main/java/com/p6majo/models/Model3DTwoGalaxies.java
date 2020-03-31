@@ -1,8 +1,7 @@
 package com.p6majo.models;
 
 import com.p6majo.octtree.Cuboid;
-import com.p6majo.octtree.Particle;
-import com.p6majo.octtree.Vector3D;
+import com.p6majo.linalg.Vector3D;
 
 import java.awt.*;
 
@@ -37,15 +36,31 @@ public class Model3DTwoGalaxies extends Model3D{
     public Model3DTwoGalaxies(double G, double theta, double dt){
         super(G,theta,dt);
 
-        Vector3D pos = new Vector3D(-8000,-8000,-8000);
-        Vector3D vel = new Vector3D(100,100,10);
-        Vector3D omega = new Vector3D(0,0,1);
-        Galaxy3D galaxy1 = new Galaxy3D(G,100000,10,100,1000,pos,vel,omega, Color.WHITE);
+        double m1 = 10000;
+        double m2 = 190000;
 
-        Vector3D pos2 = new Vector3D(8000,8000,8000);
-        Vector3D vel2 = new Vector3D(-100,-100,-10);
-        Vector3D omega2 = new Vector3D(0,1,0);
-        Galaxy3D galaxy2 = new Galaxy3D(G,100000,10,200,1000,pos2,vel2,omega2, Color.GREEN);
+        Vector3D pos1 = new Vector3D(0,0,3000);
+        Vector3D pos2 = new Vector3D(0,0,-3000);
+        Vector3D diff = pos1.add(pos2.mul(-1.));
+
+        Vector3D centerOfMass = pos1.mul(m1).add(pos2.mul(m2)).mul(1./(m1+m2));
+        System.out.println("Center of mass: "+centerOfMass);
+        System.out.println("Gravity: " + G);
+        double d = diff.length();
+        double omega = G*(m1+m2)/d/d/d;
+        System.out.println("Distance of the two galaxies: " + d);
+        System.out.println("Angular velocity: " + omega);
+
+        double r1 = pos1.sub(centerOfMass).length();
+        double r2 = pos2.sub(centerOfMass).length();
+
+        Vector3D vel = new Vector3D(0.1*r1*omega,Math.sqrt(1-0.1*0.1)*r1*omega,0);
+        Vector3D omega1 = new Vector3D(0,1,1);
+        Galaxy3D galaxy1 = new Galaxy3D(G,m1,10,2000,500,3000,pos1,vel,omega1, Color.WHITE);
+
+        Vector3D vel2 = new Vector3D(0,-r2*omega,0);
+        Vector3D omega2 = new Vector3D(1,1,0);
+        Galaxy3D galaxy2 = new Galaxy3D(G,m2,100,10,500,2000,pos2,vel2,omega2, Color.GREEN);
 
         super.particles.addAll(galaxy1.getParticles());
         super.particles.addAll(galaxy2.getParticles());

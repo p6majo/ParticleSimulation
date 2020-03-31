@@ -4,16 +4,13 @@ package com.p6majo.opengl;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
-import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.p6majo.octtree.Cuboid;
 import com.p6majo.octtree.Particle;
-import com.p6majo.octtree.Vector3D;
+import com.p6majo.linalg.Vector3D;
 import com.p6majo.particleSimulation3D.SpaceSimulation;
-import com.p6majo.utils.Boundary;
-import com.p6majo.utils.Distance;
 
 
 import javax.swing.*;
@@ -24,9 +21,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;
-
-import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
-import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 
 
 /**
@@ -448,9 +442,9 @@ public class SpaceView extends JPanel implements GLEventListener, MouseMotionLis
         float light_diffuse1[] = {0.0f, 1.0f,0.0f,1.0f};  // green diffuse light.
         float light_diffuse2[] = {0.0f, 0.0f,1.0f,1.0f};  // blue diffuse light.
 
-        float light_position0[] = {1.0f, 1.0f, 1.0f, 0.0f};  // Infinite light location.
-        float light_position1[] = {1.0f, 1.0f, 1.0f, 1.0f};  // Infinite light location.
-        float light_position2[] = {1.0f, 0.0f, 1.0f, 0.0f};  // Infinite light location.
+        float light_position0[] = {-1.0f, 1.0f, 1.0f, 0.0f};  // Infinite light location.
+        float light_position1[] = {-1.0f, 1.0f, 1.0f, 1.0f};  // Infinite light location.
+        float light_position2[] = {-1.0f, 0.0f, 1.0f, 0.0f};  // Infinite light location.
 
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, light_diffuse0,0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, light_position0,0);

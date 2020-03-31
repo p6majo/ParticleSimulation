@@ -1,4 +1,4 @@
-package com.p6majo.octtree;
+package com.p6majo.linalg;
 
 /**
  * @author p6majo
@@ -53,6 +53,7 @@ public class Vector3D {
     public double getNorm2(){
         return this.x*this.x+this.y*this.y+this.z*this.z;
     }
+    public double length(){return Math.sqrt(getNorm2());}
 
     public static Vector3D midPoint(Vector3D one, Vector3D two){
         return new Vector3D((one.x+two.x)/2,(one.y+two.y)/2,(one.z+two.z)/2);
@@ -67,6 +68,10 @@ public class Vector3D {
     public Vector3D sub(Vector3D shift){ return this.add(shift.mul(-1)); }
 
     public Vector3D mul(double scale){ return new Vector3D(this.x*scale,this.y*scale,this.z*scale); }
+
+    public double dot(Vector3D factor){
+        return this.x*factor.x+this.y*factor.y+this.z*factor.z;
+    }
 
     public Vector3D cross(Vector3D factor) {return new Vector3D(
             this.getY()*factor.getZ()-this.getZ()*factor.getY(),

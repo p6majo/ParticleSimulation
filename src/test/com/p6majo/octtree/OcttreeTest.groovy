@@ -1,5 +1,6 @@
 package com.p6majo.octtree
 
+import com.p6majo.linalg.Vector3D
 import junit.framework.TestCase
 
 class OcttreeTest extends TestCase {

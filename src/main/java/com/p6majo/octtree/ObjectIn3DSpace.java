@@ -1,5 +1,7 @@
 package com.p6majo.octtree;
 
+import com.p6majo.linalg.Vector3D;
+
 /**
  * @author p6majo
  * @version 1.0

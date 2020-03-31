@@ -2,7 +2,9 @@ package com.p6majo.models;
 
 import com.p6majo.octtree.Cuboid;
 import com.p6majo.octtree.Particle;
-import com.p6majo.octtree.Vector3D;
+import com.p6majo.linalg.Vector3D;
+
+import java.awt.*;
 
 /**
  * A container to keep all the parameters and initial data of the simulation
@@ -36,27 +38,15 @@ public class Model3DGalaxy extends Model3D{
     public Model3DGalaxy(double G, double theta, double dt){
         super(G,theta,dt);
 
-        double centralMass =10000;
-        Vector3D low = this.container.getLow();
-        Vector3D high = this.container.getHigh();
+        double m1 = 1000000;
 
-        Vector3D mid = this.container.getMiddle();
-        this.particles.add(new Particle(mid,Vector3D.getZERO(),centralMass,true));
+        Vector3D pos1 = new Vector3D(0,0,0);
+        Vector3D vel = Vector3D.getZERO();
 
-        for (int i = 1; i < particleNumber; i++) {
+        Vector3D omega = new Vector3D(0.1,0.9,0);
+        Galaxy3D galaxy1 = new Galaxy3D(G,m1,1,1000,3000,5000,pos1,vel,omega, Color.WHITE);
 
-
-            double r = Math.sqrt(Math.random()) * 500 + 1000; //get more stars further out
-            double phi = Math.random() * 2. * Math.PI;
-            double z = Math.random()*50;
-
-            Vector3D pos = new Vector3D(r * Math.cos(phi), r * Math.sin(phi), z);
-            Vector3D omega = new Vector3D(0, 0, 1);
-            Vector3D v = omega.cross(pos);
-            v = v.mul(Math.sqrt(G * centralMass / r / v.getNorm2()));
-
-            particles.add(new Particle(pos,v,Math.random()*3));
-        }
+        super.particles.addAll(galaxy1.getParticles());
 
         System.out.println(this.toString());
 

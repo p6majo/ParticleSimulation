@@ -2,13 +2,7 @@ package com.p6majo.models;
 
 import com.p6majo.octtree.Cuboid;
 import com.p6majo.octtree.Particle;
-import com.p6majo.octtree.Vector3D;
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Function;
+import com.p6majo.linalg.Vector3D;
 
 /**
  * A container to keep all the parameters and initial data of the simulation
