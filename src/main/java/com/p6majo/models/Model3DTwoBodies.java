@@ -1,8 +1,9 @@
 package com.p6majo.models;
 
+import com.p6majo.linalg.Vector;
+import com.p6majo.linalg.Vector3D;
 import com.p6majo.octtree.Cuboid;
 import com.p6majo.octtree.Particle;
-import com.p6majo.linalg.Vector3D;
 
 /**
  * A container to keep all the parameters and initial data of the simulation
@@ -36,14 +37,14 @@ public class Model3DTwoBodies extends Model3D{
     public Model3DTwoBodies(double G, double theta, double dt){
        super(G,theta,dt);
 
-        Vector3D low = this.container.getLow();
-        Vector3D high = this.container.getHigh();
+        Vector low = this.container.getLow();
+        Vector high = this.container.getHigh();
 
-        Vector3D diag = high.sub(low);
-        Vector3D pos1 = low.add(diag.mul(2./5));
-        Vector3D pos2 = low.add(diag.mul(3./5));
-        Vector3D v1 = new Vector3D(110,0,0);
-        Vector3D v2 = new Vector3D(-110,0,0);
+        Vector diag = high.sub(low);
+        Vector pos1 = low.add(diag.mul(2./5));
+        Vector pos2 = low.add(diag.mul(3./5));
+        Vector v1 = new Vector3D(110,0,0);
+        Vector v2 = new Vector3D(-110,0,0);
        this.particles.add(new Particle(pos1,v1,500.));
        this.particles.add(new Particle(pos2,v2,500.));
 
@@ -98,8 +99,8 @@ public class Model3DTwoBodies extends Model3D{
      */
     @Override
     public Cuboid defineContainer() {
-        Vector3D low = new Vector3D(-500,-500,-500);
-        Vector3D high = new Vector3D(500,500,500);
+        Vector low = new Vector3D(-500,-500,-500);
+        Vector high = new Vector3D(500,500,500);
         return new Cuboid(low,high);
     }
 

@@ -1,6 +1,6 @@
 package com.p6majo.octtree;
 
-import com.p6majo.linalg.Vector3D;
+import com.p6majo.linalg.Vector;
 import com.p6majo.logger.Logger;
 import com.p6majo.logger.Logger.Level;
 
@@ -19,8 +19,8 @@ public class Cuboid {
      **********************
      */
 
-    private Vector3D low;
-    private Vector3D high;
+    private Vector low;
+    private Vector high;
     private double averageSize;
 
     /*
@@ -34,7 +34,7 @@ public class Cuboid {
      * @param low lower, left, front corner
      * @param high upper, right, back corner
      */
-    public Cuboid(Vector3D low, Vector3D high){
+    public Cuboid(Vector low, Vector high){
 
         //make sure, the low and high parameters are well defined
         if (high.getX()<low.getX()||high.getY()<low.getY()||high.getZ()<low.getZ())
@@ -51,15 +51,15 @@ public class Cuboid {
      ****       getter   ***
      ***********************
      */
-    public Vector3D getLow(){
+    public Vector getLow(){
         return this.low;
     }
 
-    public Vector3D getHigh(){
+    public Vector getHigh(){
         return this.high;
     }
 
-    public Vector3D getMiddle(){ return this.high.add(this.low).mul(0.5);}
+    public Vector getMiddle(){ return this.high.add(this.low).mul(0.5);}
 
     public double getLength(){
         return this.high.getX()-this.low.getX();
@@ -114,8 +114,8 @@ public class Cuboid {
      *****************************
      */
 
-    public Vector3D randomPosition(){
-        return new Vector3D(low.getX()+Math.random()*getLength(),low.getY()+Math.random()*getWidth(),low.getZ()+Math.random()*getHeight());
+    public Vector randomPosition(){
+        return new Vector(low.getX()+Math.random()*getLength(),low.getY()+Math.random()*getWidth(),low.getZ()+Math.random()*getHeight());
     }
 
 
@@ -126,7 +126,7 @@ public class Cuboid {
      * @param point
      * @return True, if inside, false otherwise
      */
-    public boolean contains(Vector3D point){
+    public boolean contains(Vector point){
         return(point.getX() >= this.low.getX() &&
                 point.getX() < this.high.getX() &&
                 point.getY() >= this.low.getY() &&
@@ -167,7 +167,7 @@ public class Cuboid {
         double backmin = Math.min(this.getBack(),other.getBack());
 
         if  (leftmax<rightmin && frontmax<backmin && bottommax<topmin)
-            return new Cuboid(new Vector3D(leftmax,frontmax,bottommax),new Vector3D(rightmin,backmin,topmin));
+            return new Cuboid(new Vector(leftmax,frontmax,bottommax),new Vector(rightmin,backmin,topmin));
         else
             return null;
     }
@@ -177,7 +177,7 @@ public class Cuboid {
      * @param shift
      * @return shifted cuboid
      */
-    public Cuboid shift(Vector3D shift){
+    public Cuboid shift(Vector shift){
         return new Cuboid(low.add(shift),high.add(shift));
     }
 
@@ -224,7 +224,7 @@ public class Cuboid {
             coords[2*i+1] = Math.random() * maxX;
             if (coords[2*i] > coords[2*i+1]) swap(coords, 2*i, 2*i+1);
         }
-        return new Cuboid(new Vector3D(coords[0],coords[2],coords[4]),new Vector3D(coords[1],coords[3],coords[5]));
+        return new Cuboid(new Vector(coords[0],coords[2],coords[4]),new Vector(coords[1],coords[3],coords[5]));
     }
 
 }

@@ -3,9 +3,7 @@ package com.p6majo.particleSimulation3D;
 
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
-import com.p6majo.opengl.GLView2;
 import com.p6majo.opengl.SpaceView;
-import com.p6majo.physics.thomson.ThomsonSimulation;
 
 import javax.swing.*;
 

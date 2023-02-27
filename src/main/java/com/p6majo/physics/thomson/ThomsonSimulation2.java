@@ -1,10 +1,10 @@
 package com.p6majo.physics.thomson;
 
+import com.p6majo.linalg.Vector;
 import com.p6majo.physics.nbody.Particle;
 import com.p6majo.physics.nbody.Simulation;
 import com.p6majo.utils.Boundary;
 import com.p6majo.utils.Distance;
-import com.p6majo.utils.Vector;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,7 +107,7 @@ public class ThomsonSimulation2 extends Simulation {
             if (Math.random()<0.5)
                z*=-1.;
 
-            particles[i] = new Particle(i,1.,50,new Vector(3,x,y,z),new Vector(3,0,0,0),this);
+            particles[i] = new Particle(i,1.,50,new Vector(x,y,z),new Vector(0.,0.,0.),this);
             System.out.println(particles[i].toString());
         }
     }
@@ -194,10 +194,10 @@ public class ThomsonSimulation2 extends Simulation {
         //centripetal force to keep object on the surface of the sphere
         double m = p.getMass();
         double v2 = p.getv2();
-        fx = -m*v2*p.getPosition().get(0)/r/r;
-        fy = -m*v2*p.getPosition().get(1)/r/r;
-        fz = -m*v2*p.getPosition().get(2)/r/r;
-        Vector force = new Vector(3,fx,fy,fz);
+        fx = -m*v2*p.getPosition().getValue(0)/r/r;
+        fy = -m*v2*p.getPosition().getValue(1)/r/r;
+        fz = -m*v2*p.getPosition().getValue(2)/r/r;
+        Vector force = new Vector(fx,fy,fz);
 
 
         //add friction
@@ -223,7 +223,7 @@ public class ThomsonSimulation2 extends Simulation {
      */
     @Override
     public Vector getInteraction(int particleIndex) {
-        Vector force = new Vector(3,0,0,0);
+        Vector force = new Vector(0.,0.,0.);
         Particle pi = particles[particleIndex];
 
         for (int l = 0; l <particles.length; l++){

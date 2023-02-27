@@ -1,7 +1,5 @@
 package com.p6majo.utils;
 
-import com.intellij.util.ui.UIUtil;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -250,7 +248,8 @@ public class Utils {
 
     public static BufferedImage floatMatrix2BufferedImage(float[][] array, int width, int height,float min,float max){
 
-        BufferedImage image = UIUtil.createImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage image =new BufferedImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
+
         WritableRaster raster = image.getRaster();
 
         float delta = max-min;
@@ -265,7 +264,7 @@ public class Utils {
 
     public static BufferedImage floatVector2BufferedImage(float[] vector, int width, int height,float min,float max){
 
-        BufferedImage image = UIUtil.createImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
         WritableRaster raster = image.getRaster();
 
         float delta = max-min;

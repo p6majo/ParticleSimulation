@@ -291,7 +291,7 @@ public class CoordinateSystem extends JPanel {
     }
 
     public void setRange(double xmin,double xmax,double ymin,double ymax){
-        this.fixedRange = true;
+        //this.fixedRange = true;
         this.min = new MinPoint(1);
         this.min.x = xmin;
         this.min.y[0] = ymin;
@@ -398,7 +398,8 @@ public class CoordinateSystem extends JPanel {
     private void updatePlot() {
 
         if (data.size() == 1 && !fixedRange) {
-            max.x *= plotWidth;//assume one pixel for each incoming data point
+            if (max.x==min.x)
+                max.x *= plotWidth;//assume one pixel for each incoming data point
             changePlotDimensions = true;
         }
         else if (data.size() > 2) {

@@ -1,6 +1,5 @@
 package com.p6majo.parameterspace;
 
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The class Parameter which can be used as
@@ -75,7 +74,7 @@ public class Parameter implements Comparable<Parameter>{
 /*********************************************/
 
 @Override
-public int compareTo(@NotNull Parameter o) {
+public int compareTo(Parameter o) {
     return this.label.compareTo(o.label);
 }
 /*********************************************/

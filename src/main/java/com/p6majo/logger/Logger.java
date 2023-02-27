@@ -4,7 +4,7 @@ package com.p6majo.logger;
 
 public class Logger {
 
-    public static enum Level {info,warning,debug,error}
+    public enum Level {info,warning,debug,error}
     private boolean isDebugEnabled = false;
 
 
@@ -33,7 +33,30 @@ public class Logger {
                 System.exit(0);
                 break;
         }
+    }
 
+    public static void logging(Level level,String message,Class caller){
+        String name = caller.getName();
+        switch(level){
+            case info:
+                System.out.println("info: " + message+" in "+name);
+                break;
+            case warning:
+                System.out.println("warning: " + message+" in "+name);
+                break;
+            case debug:
+                System.out.println("debug: " + message+" in "+name);
+                break;
+            case error:
+                System.err.println("error: "+message+" in "+name);
+                System.exit(0);
+                break;
+        }
+
+    }
+
+    public static void logging(Level level,String message, Object caller) {
+        logging(level, message, caller.getClass());
     }
 
     /**

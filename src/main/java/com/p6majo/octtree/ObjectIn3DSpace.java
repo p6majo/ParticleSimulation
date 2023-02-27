@@ -1,6 +1,6 @@
 package com.p6majo.octtree;
 
-import com.p6majo.linalg.Vector3D;
+import com.p6majo.linalg.Vector;
 
 /**
  * @author p6majo
@@ -8,6 +8,6 @@ import com.p6majo.linalg.Vector3D;
  * @date 2019-08-26
  */
 public interface ObjectIn3DSpace {
-    public Vector3D getPosition();
+    public Vector getPosition();
     public double getMass();
 }

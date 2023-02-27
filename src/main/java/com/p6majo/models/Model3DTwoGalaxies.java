@@ -1,7 +1,7 @@
 package com.p6majo.models;
 
-import com.p6majo.octtree.Cuboid;
 import com.p6majo.linalg.Vector3D;
+import com.p6majo.octtree.Cuboid;
 
 import java.awt.*;
 
@@ -56,7 +56,7 @@ public class Model3DTwoGalaxies extends Model3D{
 
         Vector3D vel = new Vector3D(0.1*r1*omega,Math.sqrt(1-0.1*0.1)*r1*omega,0);
         Vector3D omega1 = new Vector3D(0,1,1);
-        Galaxy3D galaxy1 = new Galaxy3D(G,m1,10,2000,500,3000,pos1,vel,omega1, Color.WHITE);
+        Galaxy3D galaxy1 = new Galaxy3D(G,m1,10,2000,500,2000,pos1,vel,omega1, Color.WHITE);
 
         Vector3D vel2 = new Vector3D(0,-r2*omega,0);
         Vector3D omega2 = new Vector3D(1,1,0);

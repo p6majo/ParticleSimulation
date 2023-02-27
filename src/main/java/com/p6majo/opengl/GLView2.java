@@ -6,11 +6,11 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import com.p6majo.linalg.Vector;
 import com.p6majo.physics.nbody.Particle;
 import com.p6majo.physics.nbody.Simulation;
 import com.p6majo.utils.Boundary;
 import com.p6majo.utils.Distance;
-import com.p6majo.utils.Vector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -507,9 +507,9 @@ public class GLView2 extends JPanel implements GLEventListener, MouseMotionListe
         Particle[] particles = simulation.getParticles();
         for (int i = 0; i < particles.length; i++) {
 
-            double x =particles[i].getPosition().get(0);
-            double y =particles[i].getPosition().get(1);
-            double z =particles[i].getPosition().get(2);
+            double x =particles[i].getPosition().getValue(0);
+            double y =particles[i].getPosition().getValue(1);
+            double z =particles[i].getPosition().getValue(2);
 
             if (particles[i].isMarked())
                 gl.glColor3f(1.f,0,0);
@@ -538,13 +538,13 @@ public class GLView2 extends JPanel implements GLEventListener, MouseMotionListe
 
                 if (distances[i][j].visible) {
                     Vector pos = particles[i].getPosition();
-                    gl.glTranslated(pos.get(0), pos.get(1), pos.get(2));
-                    Vector zAxis = new Vector(3, 0, 0, 1);
-                    Vector rotAxis = zAxis.crossproduct(direction);
+                    gl.glTranslated(pos.getValue(0), pos.getValue(1), pos.getValue(2));
+                    Vector zAxis = new Vector( 0., 0., 1.);
+                    Vector rotAxis = zAxis.toVector3D().cross(direction.toVector3D());
                     rotAxis = rotAxis.normalize();
 
                     double angle = Math.acos(direction.dot(zAxis) / length);
-                    gl.glRotated(angle * 180 / Math.PI, rotAxis.get(0), rotAxis.get(1), rotAxis.get(2));
+                    gl.glRotated(angle * 180 / Math.PI, rotAxis.getValue(0), rotAxis.getValue(1), rotAxis.getValue(2));
                     glu.gluCylinder(qobj, 10, 10, length, 5, 5);
 
                     gl.glPopMatrix();

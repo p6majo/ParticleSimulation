@@ -7,9 +7,10 @@ import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import com.p6majo.linalg.Vector;
+import com.p6majo.linalg.Vector3D;
 import com.p6majo.octtree.Cuboid;
 import com.p6majo.octtree.Particle;
-import com.p6majo.linalg.Vector3D;
 import com.p6majo.particleSimulation3D.SpaceSimulation;
 
 
@@ -248,9 +249,9 @@ public class SpaceView extends JPanel implements GLEventListener, MouseMotionLis
         gl.glLoadIdentity();
 
         Cuboid container = simulation.getContainer();
-        Vector3D low = container.getLow();
-        Vector3D high = container.getHigh();
-        Vector3D middle = container.getMiddle();
+        Vector low = container.getLow();
+        Vector high = container.getHigh();
+        Vector middle = container.getMiddle();
 
         //Setup Projection
         gl.glMatrixMode(GL2.GL_PROJECTION);
@@ -292,8 +293,8 @@ public class SpaceView extends JPanel implements GLEventListener, MouseMotionLis
     }
 
     private void drawBox(GL2 gl){
-      Vector3D low = simulation.getContainer().getLow();
-      Vector3D high = simulation.getContainer().getHigh();
+      Vector low = simulation.getContainer().getLow();
+      Vector high = simulation.getContainer().getHigh();
         
         gl.glColor3f(1.0f, 0.0f, 0.0f);
 

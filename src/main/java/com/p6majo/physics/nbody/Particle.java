@@ -1,8 +1,8 @@
 package com.p6majo.physics.nbody;
 
 
+import com.p6majo.linalg.Vector;
 import com.p6majo.utils.Boundary;
-import com.p6majo.utils.Vector;
 
 /**
  * The class Particle, the physical entity in an N-Body-Simulation
@@ -155,7 +155,7 @@ public class Particle {
      * @param axis
      */
     public void rotateMomentum3d(double angle, Vector axis){
-        Vector pNew = this.getMomentum().mul(Math.cos(angle)).add(axis.crossproduct(this.getMomentum()).mul(Math.sin(angle)));
+        Vector pNew = this.getMomentum().mul(Math.cos(angle)).add(axis.toVector3D().cross(this.getMomentum().toVector3D()).mul(Math.sin(angle)));
         this.setMomentum(pNew);
     }
 
@@ -169,7 +169,7 @@ public class Particle {
         Vector p = this.getMomentum();
         double c = Math.cos(angle);
         double s = Math.sin(angle);
-        Vector pNew = new Vector(2,p.get(0)*c-p.get(1)*s,p.get(0)*s+p.get(1)*c);
+        Vector pNew = new Vector(p.getValue(0)*c-p.getValue(1)*s,p.getValue(0)*s+p.getValue(1)*c);
         this.setMomentum(pNew);
     }
 
@@ -184,18 +184,18 @@ public class Particle {
         switch(bc.getBc()){
             case reflecting:
                 for (int i = 0; i < simulation.dim; i++) {
-                    if (position.get(i)<bc.getMinSize(i)+radius)
-                        momentum.setValue(i,Math.abs(momentum.get(i)));
-                    if (position.get(i)>bc.getMaxSize(i)-radius)
-                        momentum.setValue(i,Math.abs(momentum.get(i))*(-1));
+                    if (position.getValue(i)<bc.getMinSize(i)+radius)
+                        momentum.setValue(i,0,Math.abs(momentum.getValue(i)));
+                    if (position.getValue(i)>bc.getMaxSize(i)-radius)
+                        momentum.setValue(i,0,Math.abs(momentum.getValue(i))*(-1));
                 }
                 break;
             case periodic:
                 for (int i = 0; i < simulation.dim; i++) {
-                    if (position.get(i)<0)
-                        position.setValue(i,bc.getSize(i));
-                    if (position.get(i)>bc.getSize(i))
-                        position.setValue(i,0);
+                    if (position.getValue(i)<0)
+                        position.setValue(i,0,bc.getSize(i));
+                    if (position.getValue(i)>bc.getSize(i))
+                        position.setValue(i,0,0.);
                 }
                 break;
             case none:

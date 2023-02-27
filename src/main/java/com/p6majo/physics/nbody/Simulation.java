@@ -1,9 +1,9 @@
 package com.p6majo.physics.nbody;
 
 
+import com.p6majo.linalg.Vector;
 import com.p6majo.utils.Boundary;
 import com.p6majo.utils.Distance;
-import com.p6majo.utils.Vector;
 
 import java.util.Timer;
 import java.util.TimerTask;

@@ -41,6 +41,7 @@ public class IsingGui extends JFrame implements ActionListener, IsingListener, H
     private double startTemp;
     private double endTemp;
     private double dT;
+    private int N;
 
     /*
      **********************
@@ -50,7 +51,7 @@ public class IsingGui extends JFrame implements ActionListener, IsingListener, H
 
     public void createUIComponents() {
         latticeDraw = new LatticeDraw();
-        latticeDraw.setCanvasSize(512, 512);
+        latticeDraw.setCanvasSize(1024, 1024);
         dynamicalPlot = new DynamicalPlot(800,300);
         dynamicalPlot2 = new DynamicalPlot(400,300);
         dynamicalPlot3 = new DynamicalPlot(400,300);
@@ -83,7 +84,7 @@ public class IsingGui extends JFrame implements ActionListener, IsingListener, H
         this.setVisible(true);
 
 
-        int N = 32;       // N-by-N lattice
+        this.N = 20;// N-by-N lattice
         double kT = 3;    // temperature
         ising = new Ising(this, N, kT, 0.5);
         ising.addListener(this);
@@ -113,12 +114,12 @@ public class IsingGui extends JFrame implements ActionListener, IsingListener, H
             @Override
             public void actionPerformed(ActionEvent e) {
                 mode = heatcapacity;
-                startTemp = 2.1;
-                endTemp=3.0;
+                startTemp = 1;
+                endTemp=4.9;
                 dT = 0.01;
                 ising.equilibriate(startTemp);
                 dynamicalPlot2.clear();
-                dynamicalPlot2.setRange(startTemp,endTemp,0,6000);
+                dynamicalPlot2.setRange(startTemp,endTemp,0,Math.max((double) N*N/9000,(int)((Math.log(N)/Math.log(2)-3.9)))*13000);
                 heatCapacityCalculation(startTemp);
             }
         });
@@ -209,7 +210,7 @@ public class IsingGui extends JFrame implements ActionListener, IsingListener, H
     }
 
     private void heatCapacityCalculation(double temp){
-        HeatCapacityThread heatThread = new HeatCapacityThread(ising,temp,10000,this);
+        HeatCapacityThread heatThread = new HeatCapacityThread(ising,temp,1000000/N,this);
         heatThread.start();
     }
 

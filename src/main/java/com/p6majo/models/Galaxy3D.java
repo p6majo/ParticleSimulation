@@ -2,8 +2,8 @@ package com.p6majo.models;
 
 
 import com.p6majo.linalg.Plane;
-import com.p6majo.octtree.Particle;
 import com.p6majo.linalg.Vector3D;
+import com.p6majo.octtree.Particle;
 
 
 import java.awt.*;
@@ -68,7 +68,7 @@ public class Galaxy3D {
         if (vel!=null)
             particles.add(new Particle(pos,vel,centralMass));
         else
-            particles.add(new Particle(pos,Vector3D.getZERO(),centralMass,true)); //fixed center
+            particles.add(new Particle(pos, Vector3D.getZERO(),centralMass,true)); //fixed center
 
         Plane plane = new Plane(omega,pos);
 

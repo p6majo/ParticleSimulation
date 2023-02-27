@@ -1,6 +1,6 @@
 package com.p6majo.octtree;
 
-import com.p6majo.linalg.Vector3D;
+import com.p6majo.linalg.Vector;
 import com.p6majo.logger.Logger;
 import com.p6majo.models.Model3D;
 
@@ -34,7 +34,7 @@ public class Octtree<O extends ObjectIn3DSpace>{
     private Cuboid boundary;
 
     //center of mass
-    private Vector3D centerOfMass;
+    private Vector centerOfMass;
     private double mass;
 
     private boolean divided;
@@ -58,11 +58,11 @@ public class Octtree<O extends ObjectIn3DSpace>{
         this(null,boundary,n,true);
     }
 
-    public Octtree(Vector3D low,Vector3D high){
+    public Octtree(Vector low,Vector high){
         this(null,new Cuboid(low,high),true);
     }
 
-    public Octtree(Vector3D low,Vector3D high,int n){
+    public Octtree(Vector low,Vector high,int n){
         this(null,new Cuboid(low,high),n,true);
     }
 
@@ -72,11 +72,11 @@ public class Octtree<O extends ObjectIn3DSpace>{
      * @param low - collection of all the min values of the coordinates
      * @param high  collection of all the max values of the coordiantes
      */
-    public Octtree(Model3D model,Vector3D low, Vector3D high){
+    public Octtree(Model3D model,Vector low, Vector high){
         this(model,new Cuboid(low,high));
     }
 
-    public Octtree(Model3D model,Vector3D low, Vector3D high,int n){
+    public Octtree(Model3D model,Vector low, Vector high,int n){
         this(model,new Cuboid(low,high),n,true);
     }
 
@@ -88,11 +88,11 @@ public class Octtree<O extends ObjectIn3DSpace>{
         this(model,boundary,n,true);
     }
 
-    public Octtree(Model3D model,Vector3D low, Vector3D high,boolean root){
+    public Octtree(Model3D model,Vector low, Vector high,boolean root){
         this(model,new Cuboid(low,high),root);
     }
 
-    public Octtree(Model3D model,Vector3D low, Vector3D high,int n,boolean root){
+    public Octtree(Model3D model,Vector low, Vector high,int n,boolean root){
         this(model,new Cuboid(low,high),n,root);
     }
 
@@ -106,7 +106,7 @@ public class Octtree<O extends ObjectIn3DSpace>{
         this.root = true;
         this.n = n;
         this.divided = false;
-        this.centerOfMass = Vector3D.getZERO();
+        this.centerOfMass = Vector.getZero(3);
 
         this.content = new ArrayList<>();
         for (int i = 0; i < subtrees.length; i++)
@@ -123,7 +123,7 @@ public class Octtree<O extends ObjectIn3DSpace>{
         return this.mass;
     }
 
-    public Vector3D getCenterOfMass(){
+    public Vector getCenterOfMass(){
         return this.centerOfMass;
     }
 
@@ -232,7 +232,7 @@ public class Octtree<O extends ObjectIn3DSpace>{
      *
      */
     public void computeMassDistribution(){
-        this.centerOfMass = Vector3D.getZERO();
+        this.centerOfMass = Vector.getZero(3);
         this.mass = 0.;
         if (content.size()<=n){//center of mass for individual particles of the cuboid
             for (O o : content) {
@@ -249,7 +249,7 @@ public class Octtree<O extends ObjectIn3DSpace>{
                 if (subtree!=null) {
                     subtree.computeMassDistribution();
                     double subMass = subtree.getMass();
-                    Vector3D subCenter = subtree.getCenterOfMass();
+                    Vector subCenter = subtree.getCenterOfMass();
                     this.centerOfMass = this.centerOfMass.add(subCenter.mul(subMass));
                     this.mass += subMass;
                 }
@@ -268,27 +268,27 @@ public class Octtree<O extends ObjectIn3DSpace>{
      * @param particle
      * @return
      */
-    public Vector3D calculateAcceleration(Particle particle){
+    public Vector calculateAcceleration(Particle particle){
         //no particles in the tree
         if (this.content.size()==0)
-            return Vector3D.getZERO();
+            return Vector.getZero(3);
 
         double r = particle.getPosition().getDistance(this.centerOfMass);
 
         if (r<model.rmin) //particle exactly at the center of mass
-            return Vector3D.getZERO(); //no self-interaction
+            return Vector.getZero(3); //no self-interaction
 
         double theta = 2.*this.boundary.getAverageSize()/r;
 
         //cuboid is far away or only contains one particle
         if (theta<model.getTheta()|| this.content.size()==1){
-          // Vector3D acceleration =  this.centerOfMass.add(particle.getPosition().mul(-1.)).mul(1./r).mul(model.acceleration(this.mass,r));
-          Vector3D acceleration =  this.centerOfMass.add(particle.getPosition().mul(-1.)).mul(1./r).mul(model.G*this.mass/r/r);
+          // Vector acceleration =  this.centerOfMass.add(particle.getPosition().mul(-1.)).mul(1./r).mul(model.acceleration(this.mass,r));
+          Vector acceleration =  this.centerOfMass.add(particle.getPosition().mul(-1.)).mul(1./r).mul(model.G*this.mass/r/r);
 
             return acceleration;
         }
         else{
-            Vector3D acceleration = Vector3D.getZERO();
+            Vector acceleration = Vector.getZero(3);
             for (Octtree<O> subtree : subtrees) {
                 acceleration = acceleration.add(subtree.calculateAcceleration(particle));
             }
@@ -348,25 +348,25 @@ public class Octtree<O extends ObjectIn3DSpace>{
      * Create a substructure for the existing container
      */
     private void subdivide(){
-        Vector3D low = boundary.getLow();
-        Vector3D high = boundary.getHigh();
-        Vector3D mid = Vector3D.midPoint(low,high);
+        Vector low = boundary.getLow();
+        Vector high = boundary.getHigh();
+        Vector mid = Vector.midPoint(low,high);
 
-        Vector3D sh = low.directionTo(mid);
+        Vector sh = low.directionTo(mid);
 
         subtrees[0] = new Octtree(model,low,mid,n,false); //000
-        subtrees[1] = new Octtree(model,low.add(0,0,sh.getZ()),mid.add(0,0,sh.getZ()),n,false); //001
-        subtrees[2] = new Octtree(model,low.add(0,sh.getY(),0),mid.add(0,sh.getY(),0),n,false); //010
-        subtrees[3] = new Octtree(model,low.add(0,sh.getY(),sh.getZ()),mid.add(0,sh.getY(),sh.getZ()),n,false); //011
-        subtrees[4] = new Octtree(model,low.add(sh.getX(),0,0),mid.add(sh.getX(),0,0),n,false); //100
-        subtrees[5] = new Octtree(model,low.add(sh.getX(),0,sh.getZ()),mid.add(sh.getX(),0,sh.getZ()),n,false);//101
-        subtrees[6] = new Octtree(model,low.add(sh.getX(),sh.getY(),0),mid.add(sh.getX(),sh.getY(),0),n,false);//110
+        subtrees[1] = new Octtree(model,low.add(new Vector(0.,0.,sh.getZ())),mid.add(new Vector(0.,0.,sh.getZ())),n,false); //001
+        subtrees[2] = new Octtree(model,low.add(new Vector(0.,sh.getY(),0.)),mid.add(new Vector(0.,sh.getY(),0.)),n,false); //010
+        subtrees[3] = new Octtree(model,low.add(new Vector(0.,sh.getY(),sh.getZ())),mid.add(new Vector(0.,sh.getY(),sh.getZ())),n,false); //011
+        subtrees[4] = new Octtree(model,low.add(new Vector(sh.getX(),0.,0.)),mid.add(new Vector(sh.getX(),0.,0.)),n,false); //100
+        subtrees[5] = new Octtree(model,low.add(new Vector(sh.getX(),0.,sh.getZ())),mid.add(new Vector(sh.getX(),0.,sh.getZ())),n,false);//101
+        subtrees[6] = new Octtree(model,low.add(new Vector(sh.getX(),sh.getY(),0.)),mid.add(new Vector(sh.getX(),sh.getY(),0.)),n,false);//110
         subtrees[7] = new Octtree(model,mid,high);//111
 
     }
 
     private boolean isContained(O object){
-        Vector3D position = object.getPosition();
+        Vector position = object.getPosition();
         return this.boundary.contains(position);
     }
 

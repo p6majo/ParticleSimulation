@@ -1,9 +1,9 @@
 package com.p6majo.physics.nbody;
 
 
+import com.p6majo.linalg.Vector;
 import com.p6majo.utils.Boundary;
 import com.p6majo.utils.Distance;
-import com.p6majo.utils.Vector;
 
 /**
  * The class NBodySimulation
@@ -236,21 +236,21 @@ public class NBodySimulation extends Simulation {
                 q.rotateMomentum2d(sign * angle);
             } else if (dim == 3) {
                 Vector dx = p.getPosition().sub(q.getPosition());
-                Vector axis = p.getMomentum().crossproduct(dx);
+                Vector axis = p.getMomentum().toVector3D().cross(dx.toVector3D());
                 double norm = axis.dot(axis);
                 if (norm>0)
                     axis=axis.normalize();
                 else{
                     //create random orthogonal axis
                     //head on collision any orthogonal vector to p will do
-                    if (p.getMomentum().get(0)==0.)
-                        axis = new Vector(3,1,0,0);
-                    else if (p.getMomentum().get(1)==0.)
-                        axis = new Vector(3,0,1,0);
-                    else if (p.getMomentum().get(2)==0.)
-                        axis = new Vector(3,0,0,1);
+                    if (p.getMomentum().getValue(0)==0.)
+                        axis = new Vector(1.,0.,0.);
+                    else if (p.getMomentum().getValue(1)==0.)
+                        axis = new Vector(0.,1.,0.);
+                    else if (p.getMomentum().getValue(2)==0.)
+                        axis = new Vector(0.,0.,1.);
                     else {
-                        axis = new Vector(3,p.getMomentum().get(1),-p.getMomentum().get(2),0);
+                        axis = new Vector(p.getMomentum().getValue(1),-p.getMomentum().getValue(2),0.);
                         axis =axis.normalize();
                     }
                 }
@@ -288,8 +288,8 @@ public class NBodySimulation extends Simulation {
 
 
             for (int j = 0; j < this.dim; j++) {
-                position.setValue(j, this.boundary.getSize(j)+Math.random() * this.boundary.getSize(dim+j));
-                momentum.setValue(j, 2000 - Math.random() * 4000);
+                position.setValue(j,0, this.boundary.getSize(j)+Math.random() * this.boundary.getSize(dim+j));
+                momentum.setValue(j, 0,2000 - Math.random() * 4000);
             }
 
 
@@ -299,7 +299,7 @@ public class NBodySimulation extends Simulation {
 
     @Override
     public Vector getForceField(int particleIndex){
-        return new Vector(3,0,g,0);
+        return new Vector(0.,g,0.);
     }
 
     @Override

@@ -73,13 +73,20 @@ public class HeatCapacityThread extends Thread {
         System.out.println("Heat capacity thread for " + this.temperature + " started!");
         double e= 0;
         double e2 = 0;
-        for (int i = 0; i < steps; i++) {
+        //use 10 percent of the steps for callibration
+        int calibSteps = (int) (steps*0.5);
+        for (int i = 0; i < calibSteps; i++) {
+            ising.silentStep();
+        }
+        //steps for temporal average
+        int averagingSteps = steps-calibSteps;
+        for (int i=0;i<averagingSteps;i++){
             ising.silentStep();
             e+=ising.energy();
             e2+=ising.energy2();
         }
-        e/=steps;
-        e2/=steps;
+        e/=averagingSteps;
+        e2/=averagingSteps;
 
         if (listener!=null) {
             Data data = new Data();

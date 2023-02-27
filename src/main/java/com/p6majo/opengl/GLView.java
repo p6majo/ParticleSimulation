@@ -289,9 +289,9 @@ private final Simulation simulation;
         Particle[] particles = simulation.getParticles();
         for (int i = 0; i < particles.length; i++) {
 
-            double x =particles[i].getPosition().get(0);
-            double y =particles[i].getPosition().get(1);
-            double z =particles[i].getPosition().get(2);
+            double x =particles[i].getPosition().getValue(0);
+            double y =particles[i].getPosition().getValue(1);
+            double z =particles[i].getPosition().getValue(2);
 
             if (particles[i].isMarked())
                     gl.glColor3f(1.f,0,0);

@@ -1,6 +1,7 @@
 package com.p6majo.octtree;
 
-import com.p6majo.linalg.Vector3D;
+import com.p6majo.linalg.Vector;
+import com.p6majo.linalg.Vector;
 import com.p6majo.utils.Utils;
 
 /**
@@ -16,11 +17,13 @@ public class Particle implements ObjectIn3DSpace {
      ***           Attributes           **********
      *********************************************
      */
-    private Vector3D position;
-    private Vector3D velocity;
-    private Vector3D acceleration;
+    private Vector position;
+    private Vector velocity;
+    private Vector acceleration;
     private double mass;
+    private double radius;
     private final boolean fixed;
+    private boolean approaching;
 
 
     /*
@@ -34,31 +37,38 @@ public class Particle implements ObjectIn3DSpace {
      *
      * @param position
      */
-    public Particle(Vector3D position){
-        this(position,Vector3D.getZERO(),Math.random()*10);
+    public Particle(Vector position){
+        this(position,Vector.getZero(3),Math.random()*10);
     }
 
 
-    public Particle(Vector3D position,Vector3D velocity){
+    public Particle(Vector position,Vector velocity){
         this(position,velocity,Math.random()*10);
     }
 
 
-    public Particle(Vector3D position,Vector3D velocity,double mass){
+    public Particle(Vector position,Vector velocity,double mass){
         this(position,velocity,mass,false);
     }
-    /**
-     * Create a particle at the provided position and mass
-     *
-     * @param position
-     * @param mass
-     */
-    public Particle(Vector3D position,Vector3D velocity,double mass,boolean fixed){
+
+    public Particle(Vector position,Vector velocity,double mass, boolean fixed) {
+        this(position,velocity,mass,Math.pow(mass,1./3),fixed);
+    }
+
+
+        /**
+         * Create a particle at the provided position and mass
+         *
+         * @param position
+         * @param mass
+         */
+    public Particle(Vector position,Vector velocity,double mass,double radius, boolean fixed){
         this.position = position;
         this.velocity = velocity;
-        this.acceleration = Vector3D.getZERO();
+        this.acceleration = Vector.getZero(3);
         this.mass = mass;
         this.fixed=fixed;
+        this.radius = radius;Math.pow(mass,1./3);
     }
 
 
@@ -71,16 +81,37 @@ public class Particle implements ObjectIn3DSpace {
     public boolean isFixed() {
         return fixed;
     }
+    public Vector getVelocity(){return this.velocity;}
 
+    @Override
+    public Vector getPosition() { return this.position; }
+    @Override
+    public double getMass() { return this.mass; }
+    
+    public Vector getMomentum(){return this.velocity.mul(this.mass);}
+    
+    public double getRadius(){return this.radius;}
+    
+    public double getv2(){return this.velocity.dot(this.velocity);}
     /*
      ***********************************************
      ***           Setters              ************
      ***********************************************
      */
 
-    public void setAcceleration(Vector3D acceleration){
+    public void setAcceleration(Vector acceleration){
         this.acceleration = acceleration;
     }
+    public void setPosition(Vector position){this.position = position;}
+    public void setVelocity(Vector velocity){this.velocity = velocity;}
+    /**
+     * the momentum can be changed dynamically via interaction with other particles
+     * @return
+     */
+    public void setMomentum(Vector p){
+        this.velocity = p.mul(1./this.mass);
+    }
+    public void setApproaching(boolean approaching) { this.approaching = approaching; }
 
     /*
      ***********************************************
@@ -88,15 +119,48 @@ public class Particle implements ObjectIn3DSpace {
      ***********************************************
      */
 
-    public void changePosition(Vector3D newPosition){
-        this.position = newPosition;
-    }
-
-    public void update(double dt){
+     public void update(double dt){
             if (!fixed) {
                 this.velocity = this.velocity.add(this.acceleration.mul(dt));
                 this.position = this.position.add(this.velocity.mul(dt));
             }
+    }
+
+    /**
+     * Perform a Galileian transformation on the momentum of the particle. The position of the particle remains unchanged <br>
+     *     <b>p</b><sub>new</sub>=m (<b>v</b>-<b>u</b>)
+     * @param u the velocity parameter of the Galileian transformation
+     */
+    public void galileiTransform(Vector u){
+        this.setVelocity(this.getVelocity().sub(u));
+    }
+
+    /**
+     * Rotate the momentum by a given angle and axis of rotation.
+     * <br>
+     *     <br>
+     *         The following calculation is applied:<br>
+     *             p<sub>new</sub> =p<sub>old</sub>cos(&phi;)+(a&#10799;p<sub>old</sub>)sin(&phi;)
+     * @param angle
+     * @param axis
+     */
+    public void rotateMomentum3d(double angle, Vector axis){
+        Vector pNew = this.getMomentum().mul(Math.cos(angle)).add(axis.toVector3D().cross(this.getMomentum().toVector3D()).mul(Math.sin(angle)));
+        this.setMomentum(pNew);
+    }
+
+    /**
+     * Perform a simple two dimensional rotation of the momentum.
+     * The sign of the angle determines, whether the rotation is
+     * performed in clockwise or counterclockwise orientation
+     * @param angle
+     */
+    public void rotateMomentum2d(double angle){
+        Vector p = this.getMomentum();
+        double c = Math.cos(angle);
+        double s = Math.sin(angle);
+        Vector pNew = new Vector(p.getValue(0)*c-p.getValue(1)*s,p.getValue(0)*s+p.getValue(1)*c);
+        this.setMomentum(pNew);
     }
 
     /*
@@ -105,11 +169,11 @@ public class Particle implements ObjectIn3DSpace {
      ***********************************************
      */
 
-    private Vector3D randomPosition(Vector3D low, Vector3D high){
+    private Vector randomPosition(Vector low, Vector high){
         double x = Utils.map(Math.random(),0,1,low.getX(),high.getX());
         double y = Utils.map(Math.random(),0,1,low.getY(),high.getY());
         double z = Utils.map(Math.random(),0,1,low.getZ(),high.getZ());
-        return new Vector3D(x,y,z);
+        return new Vector(x,y,z);
     }
 
     /*
@@ -118,13 +182,7 @@ public class Particle implements ObjectIn3DSpace {
      ***********************************************
      */
 
-    @Override
-    public Vector3D getPosition() {
-        return this.position;
-    }
-
-    @Override
-    public double getMass() { return this.mass; }
+    
     /*
      ***********************************************
      ***           toString             ************
@@ -152,7 +210,7 @@ public class Particle implements ObjectIn3DSpace {
      * @return
      */
     public static Particle random(Cuboid range,double mass){
-        return new Particle(range.randomPosition(),Vector3D.getZERO(),mass);
+        return new Particle(range.randomPosition(),Vector.getZero(3),mass);
     }
 
 

@@ -1,6 +1,5 @@
 package com.p6majo.codingtrain;
 
-import org.jdesktop.swingx.VerticalLayout;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -185,7 +184,7 @@ public abstract class CodingTrainGui {
     public void createButtonPanel(int nButtons) {
 
         buttonPanel = new JPanel();
-        buttonPanel.setLayout(new VerticalLayout());
+        buttonPanel.setLayout(new GridLayout());
         buttons = new JButton[nButtons];
         for (int i = 0; i < nButtons; i++) {
             buttons[i] = new JButton();

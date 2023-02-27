@@ -109,7 +109,7 @@ public class Ising {
         double E = 0.0;
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
-                E += 0.5 * energy(i, j);  // divide by two to mitigate double-counting
+                E += halfEnergy(i, j); //use halfEnergy to avoid double counting
         return E;
     }
 
@@ -118,10 +118,7 @@ public class Ising {
      * @return energy
      */
     public double energy2() {
-        double E = 0.0;
-        for (int i = 0; i < N; i++)
-            for (int j = 0; j < N; j++)
-                E += 0.5 * energy(i, j);  // divide by two to mitigate double-counting
+        double E = energy();
         return E*E;
     }
 
@@ -253,6 +250,22 @@ public class Ising {
         if (spin[i][j] == spin[i][(j-1+N)%N]) E++;
         else                                  E--;
         return -J * E;
+    }
+
+    /**
+     * here only the interaction to the left and down is considered, this way, there is no overcounting
+     * this method can be used for faster computing the total energy
+     * @param i
+     * @param j
+     * @return
+     */
+    private double halfEnergy(int i,int j){
+        double E=0.0;
+        if (spin[i][j] == spin[(i+1)%N][j])   E++;
+        else                                  E--;
+        if (spin[i][j] == spin[i][(j+1)%N])   E++;
+        else                                  E--;
+        return E;
     }
 
     private void orderedState(){

@@ -1,8 +1,7 @@
 package com.p6majo.models;
 
-import com.p6majo.octtree.Cuboid;
-import com.p6majo.octtree.Particle;
 import com.p6majo.linalg.Vector3D;
+import com.p6majo.octtree.Cuboid;
 
 import java.awt.*;
 
